@@ -1,8 +1,0 @@
-name: home_app_v1
-channels:
-  - conda-forge
-dependencies:
-  - python=3.10
-  - pandas=1.4.4
-  - numpy=1.23.1
-  
