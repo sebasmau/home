@@ -1,0 +1,15 @@
+name: home_app_v1
+channels:
+  - conda-forge
+dependencies:
+  - ipykernel=6.15.2
+  - python=3.10
+  - pandas=1.4.4
+  - numpy=1.23.1
+  - plotly=5.10.0
+  - httpx=0.23.0
+  - influxdb-client=1.31.0
+  - streamlit=1.15.2
+  - openpyxl=3.0.10
+  - pip
+  
