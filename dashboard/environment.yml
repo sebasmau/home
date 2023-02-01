@@ -2,9 +2,7 @@ name: home_app_v1
 channels:
   - conda-forge
 dependencies:
-  - ipykernel=6.15.2
   - python=3.10
   - pandas=1.4.4
   - numpy=1.23.1
-  - streamlit=1.15.2
   
