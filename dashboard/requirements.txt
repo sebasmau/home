@@ -3,5 +3,4 @@ pandas
 plotly
 datetime
 altair 
-time
 pydeck
