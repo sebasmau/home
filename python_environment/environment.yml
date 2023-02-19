@@ -7,4 +7,5 @@ dependencies:
   - pandas=1.4.4
   - numpy=1.23.1
   - streamlit=1.15.2
+  - openpyxl=3.1.1
   
