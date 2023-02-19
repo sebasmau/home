@@ -1,35 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import altair as alt
-import time
-import pydeck as pdk
-import influxdb_methods as infldb
-import datetime
-from urllib.error import URLError
 
-def add_logo():
-    st.markdown(
-        """
-        <style>
-            [data-testid="stSidebarNav"] {
-                background-image: url(Invencado_logo);
-                background-repeat: no-repeat;
-                padding-top: 120px;
-                background-position: 20px 20px;
-            }
-            [data-testid="stSidebarNav"]::before {
-                content: "test";
-                margin-left: 20px;
-                margin-top: 20px;
-                font-size: 30px;
-                position: relative;
-                top: 100px;
-            }
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
 
 st.set_page_config(
     page_title="Library",
