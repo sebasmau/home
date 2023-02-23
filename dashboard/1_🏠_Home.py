@@ -1,16 +1,15 @@
 import streamlit as st
 import StreamlitAppBlocks 
 
-
-StreamlitAppBlocks.login_screen()
 ####PAGE CONFIG
-st.write("hello")
 
 st.set_page_config(
     page_title="Sébastien Mauroo",
     page_icon="🪵",
     layout='wide'
 )
+
+StreamlitAppBlocks.login_screen()
 
 
 #### add CSS style and hide unneeded streamlit visuals
