@@ -4,7 +4,7 @@ import StreamlitAppBlocks
 
 StreamlitAppBlocks.login_screen()
 ####PAGE CONFIG
-
+st.write("hello")
 st.set_page_config(
     page_title="Sébastien Mauroo",
     page_icon="🪵",
