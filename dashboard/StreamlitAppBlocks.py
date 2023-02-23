@@ -4,4 +4,8 @@ import pyrebase
 
 def login_screen():
 
-    st.title("werkt dit?")
+    with st.form("Inloggen"):
+        st.subheader("Login")
+        email = st.text_input("Emailadres")
+        pw = st.text_input("Wachtwoord", type="password")
+        login = st.form_submit_button("Login")
