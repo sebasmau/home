@@ -4,12 +4,14 @@ import pyrebase
 
 def init_firebase(config):
     if 'firebase' not in st.session_state:
+        st.secrets["db_username"]
+        config = {"apiKey":st.secrets["apiKey"],"authDomain":st.secrets["authDomain"],"storageBucket":st.secrets["storageBucket"],"databaseURL":st.secrets["databaseURL"]}
         st.session_state['firebase'] = pyrebase.initialize_app(config)
 
 def login_screen():
 
     init_firebase()
-    
+
     if 'logged_in' not in st.session_state:
         st.session_state['logged_in'] = False
     
