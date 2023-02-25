@@ -1,5 +1,6 @@
 import streamlit as st
 import pyrebase
+import time
 
 
 def init_firebase():
@@ -24,5 +25,9 @@ def login_screen():
         try:
             signin = st.session_state['firebase'].auth().sign_in_with_email_and_password(email,pw)
             st.success("Login succesvol")
+            st.session_state['logged_in'] = True
+            time.sleep(3)
+            st.experimental_rerun()
         except:
             st.error("verkeerd wachtwoord")
+            st.stop()

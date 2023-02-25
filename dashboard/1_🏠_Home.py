@@ -9,7 +9,12 @@ st.set_page_config(
     layout='wide'
 )
 
-StreamlitAppBlocks.login_screen()
+
+if 'logged_in' not in st.session_state:
+        st.session_state['logged_in'] = False
+
+if st.session_state['logged_in'] == False:
+    StreamlitAppBlocks.login_screen()
 
 
 #### add CSS style and hide unneeded streamlit visuals
@@ -25,10 +30,7 @@ hide_streamlit_style = """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
 
 
-
-#### pre-fill session state variables
-if 'logged_in' not in st.session_state:
-    st.session_state['logged_in'] = False
+st.title("Welcome to the App!")
 
 
 
