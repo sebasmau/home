@@ -4,8 +4,7 @@ import pyrebase
 
 def init_firebase():
     if 'firebase' not in st.session_state:
-        st.secrets["db_username"]
-        config = {"apiKey":st.secrets["apiKey"],"authDomain":st.secrets["authDomain"],"storageBucket":st.secrets["storageBucket"],"databaseURL":st.secrets["databaseURL"]}
+        config = {"apiKey":st.secrets["firebase_credentials"]["apiKey"],"authDomain":st.secrets["firebase_credentials"]["authDomain"],"storageBucket":st.secrets["firebase_credentials"]["storageBucket"],"databaseURL":st.secrets["firebase_credentials"]["databaseURL"]}
         st.session_state['firebase'] = pyrebase.initialize_app(config)
 
 def login_screen():
