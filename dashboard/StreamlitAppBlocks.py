@@ -23,6 +23,6 @@ def login_screen():
     if login:
         try:
             signin = st.session_state['firebase'].auth().sign_in_with_email_and_password(email,pw)
-            st.succes("Login succesvol")
+            st.success("Login succesvol")
         except:
-            st.succes("verkeerd wachtwoord")
+            st.error("verkeerd wachtwoord")
