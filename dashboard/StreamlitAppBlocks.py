@@ -31,3 +31,5 @@ def login_screen():
         except:
             st.error("verkeerd wachtwoord")
             st.stop()
+    else:
+        st.stop()
