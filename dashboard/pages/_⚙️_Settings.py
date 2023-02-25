@@ -34,7 +34,7 @@ if st.session_state['logged_in'] == False:
 
         
     if st.session_state['logged_in'] == True:
-        time.wait(2)
+        time.sleep(2)
         st.experimental_rerun()
     else:
         st.stop()
