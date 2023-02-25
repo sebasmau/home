@@ -43,7 +43,6 @@ if st.session_state['logged_in'] == False:
 
     if st.session_state['password_reset'] == True:
         if st.button("Verander je wachtwoord"):
-            st.session_state['firebase'].auth.send_password_reset_email(email)
             try:
                 st.session_state['firebase'].auth().send_password_reset_email(email)
                 time.sleep(2)
