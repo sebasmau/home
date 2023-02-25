@@ -13,6 +13,7 @@ st.set_page_config(
 
 ####LOGIN CODE####
 
+
 if 'firebase' not in st.session_state:
         config = {"apiKey":st.secrets["firebase_credentials"]["apiKey"],"authDomain":st.secrets["firebase_credentials"]["authDomain"],"storageBucket":st.secrets["firebase_credentials"]["storageBucket"],"databaseURL":st.secrets["firebase_credentials"]["databaseURL"]}
         st.session_state['firebase'] = pyrebase.initialize_app(config)
