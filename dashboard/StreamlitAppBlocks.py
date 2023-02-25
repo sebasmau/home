@@ -2,7 +2,7 @@ import streamlit as st
 import pyrebase
 
 
-def init_firebase(config):
+def init_firebase():
     if 'firebase' not in st.session_state:
         st.secrets["db_username"]
         config = {"apiKey":st.secrets["apiKey"],"authDomain":st.secrets["authDomain"],"storageBucket":st.secrets["storageBucket"],"databaseURL":st.secrets["databaseURL"]}
