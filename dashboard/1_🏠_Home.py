@@ -44,7 +44,7 @@ if st.session_state['logged_in'] == False:
         if st.button("Verander je wachtwoord"):
             st.session_state['firebase'].auth.send_password_reset_email(email)
             try:
-                #st.session_state['firebase'].auth.send_password_reset_email(email)
+                st.session_state['firebase'].auth.send_password_reset_email(email)
                 time.sleep(2)
                 st.markdown(f"Email verzonden naar {email}")
                 st.caption(f"Deze email kan ook in je spam folder te vinden zijn")
