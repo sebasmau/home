@@ -20,6 +20,8 @@ if 'firebase' not in st.session_state:
 if 'logged_in' not in st.session_state:
         st.session_state['logged_in'] = False
 
+reset_password = False
+
 if st.session_state['logged_in'] == False:   
     with st.form("Inloggen"):
         st.subheader("Login")
