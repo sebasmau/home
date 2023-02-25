@@ -5,7 +5,7 @@ import altair as alt
 import time
 import pydeck as pdk
 import datetime
-from urllib.error import URLError
+import time
 
 
 st.set_page_config(
