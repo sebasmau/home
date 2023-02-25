@@ -34,12 +34,14 @@ if st.session_state['logged_in'] == False:
             st.session_state['logged_in'] = True
         except:
             st.error("verkeerd wachtwoord")
-            if st.button("Wachtwoord opnieuw instellen"):
-                 st.session_state['firebase'].auth.send_password_reset_email(email)
-                 time.sleep(2)
-                 st.caption(f"Email verzonden naar {email}")
+            reset_password = st.button("Wachtwoord opnieuw instellen")
 
-        
+    if reset_password:
+        st.session_state['firebase'].auth.send_password_reset_email(email)
+        time.sleep(2)
+        st.caption(f"Email verzonden naar {email}")
+        st.caption(f"Deze email kan ook in je spam folder te vinden zijn")
+    
     if st.session_state['logged_in'] == True:
         time.sleep(2)
         st.experimental_rerun()

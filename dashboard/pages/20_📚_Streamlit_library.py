@@ -6,6 +6,7 @@ import time
 import pydeck as pdk
 import datetime
 import time
+import pyrebase
 
 
 st.set_page_config(
