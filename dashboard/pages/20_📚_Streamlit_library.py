@@ -24,6 +24,9 @@ if 'firebase' not in st.session_state:
 if 'logged_in' not in st.session_state:
         st.session_state['logged_in'] = False
 
+if 'password_reset' not in st.session_state:
+        st.session_state['password_reset'] = False
+
 if st.session_state['logged_in'] == False:   
     with st.form("Inloggen"):
         st.subheader("Login")
@@ -36,10 +39,18 @@ if st.session_state['logged_in'] == False:
             signin = st.session_state['firebase'].auth().sign_in_with_email_and_password(email,pw)
             st.success("Login succesvol")
             st.session_state['logged_in'] = True
+            st.session_state['password_reset'] = False
         except:
             st.error("verkeerd wachtwoord")
+            st.session_state['password_rest'] = True
 
-        
+    if st.session_state['password_reset'] == True:
+        if st.button("Verander je wachtwoord"):
+            st.session_state['firebase'].auth.send_password_reset_email(email)
+            time.sleep(2)
+            st.markdown(f"Email verzonden naar {email}")
+            st.caption(f"Deze email kan ook in je spam folder te vinden zijn")
+    
     if st.session_state['logged_in'] == True:
         time.sleep(2)
         st.experimental_rerun()
