@@ -126,7 +126,7 @@ uploaded_file = st.file_uploader("Plaats hier je Fluvius verbruik bestand",accep
 
 if uploaded_file is not None:
     try:
-        dt = pd.read_csv(uploaded_file)
+        dt = pd.read_csv(uploaded_file,delimiter=';')
         st.write(st)
     except:
         st.warning("Dit is geen gebruikersdata van Fluvius")
