@@ -24,17 +24,25 @@ if 'logged_in' not in st.session_state:
 if 'password_reset' not in st.session_state:
         st.session_state['password_reset'] = False
 
-if st.session_state['logged_in'] == False:   
+if 'create_account' not in st.session_state:
+        st.session_state['create_account'] = False
+
+if st.session_state['logged_in'] == False and st.session_state['password_reset'] == False:  ###sign in screen 
     with st.form("Inloggen"):
         st.subheader("Login")
         email = st.text_input("Emailadres")
         pw = st.text_input("Wachtwoord", type="password")
         login = st.form_submit_button("Login")
-        
+    
+    ####button to show create account instead
+    if st.button("Account aanmaken"):
+        st.session_state['password_reset'] = False
+        st.session_state['create_account'] = True
+        st.experimental_rerun()
+
     if login:
         try:
             signin = st.session_state['firebase'].auth().sign_in_with_email_and_password(email,pw)
-            st.success("Login succesvol")
             st.session_state['logged_in'] = True
             st.session_state['password_reset'] = False
         except:
@@ -45,17 +53,46 @@ if st.session_state['logged_in'] == False:
         if st.button("Verander je wachtwoord"):
             try:
                 st.session_state['firebase'].auth().send_password_reset_email(email)
-                time.sleep(2)
                 st.markdown(f"Email verzonden naar {email}")
                 st.caption(f"Deze email kan ook in je spam folder te vinden zijn")
             except:
                 st.markdown(f"Niet mogelijk om een email te sturen naar: {email}, probeer later opnieuw")
     
     if st.session_state['logged_in'] == True:
-        time.sleep(2)
         st.experimental_rerun()
     else:
         st.stop()
+
+elif st.session_state['logged_in'] == False and st.session_state['password_reset'] == True:  ###create password button
+    with st.form("Account aanmaken"):
+        st.subheader("Account aanmaken")
+        email = st.text_input("Emailadres")
+        pw = st.text_input("Wachtwoord", type="password")
+        login = st.form_submit_button("Enter")
+
+    ####button to show login screen instead
+
+    if st.button("Inloggen met bestaand account"):
+        st.session_state['password_reset'] = False
+        st.session_state['create_account'] = False
+        st.experimental_rerun()
+
+    ####check email and password
+    if login:
+        if '@' not in email or '.' not in email:
+            st.warning("Vul een geldig emailadres in")
+        elif len(pw)<6:
+            st.info("Wachtwoord moet minimaal 6 karakters lang zijn")
+        else:
+            try:
+                signin = st.session_state['firebase'].auth().create_user_with_email_and_password(email,pw)
+                st.session_state['logged_in'] = True
+                st.session_state['password_reset'] = False
+            except:
+                st.info("Aanmaken van een account niet gelukt, probeer later opnieuw")
+    else:
+        st.stop()
+    
 
 
 
