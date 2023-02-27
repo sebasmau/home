@@ -81,13 +81,16 @@ elif st.session_state['logged_in'] == False and st.session_state['create_account
     if login:
         if '@' not in email or '.' not in email:
             st.warning("Vul een geldig emailadres in")
+            st.stop()
         elif len(pw)<6:
             st.info("Wachtwoord moet minimaal 6 karakters lang zijn")
+            st.stop()
         else:
             try:
                 signin = st.session_state['firebase'].auth().create_user_with_email_and_password(email,pw)
                 st.session_state['logged_in'] = True
                 st.session_state['password_reset'] = False
+                st.experimental_rerun()
             except:
                 st.info("Aanmaken van een account niet gelukt, probeer later opnieuw")
                 st.stop()
