@@ -1,15 +1,27 @@
 import streamlit as st
 import pyrebase
+import pandas as pd
 import time
 
 ####PAGE CONFIG
 
 st.set_page_config(
-    page_title="Sébastien Mauroo",
-    page_icon="🪵",
+    page_title="MeterT",
+    page_icon="⚡",
     layout='wide'
 )
 
+#### add CSS style and hide unneeded streamlit visuals
+with open('dashboard/style.css') as f:
+    st.markdown(f'<style>{f.read()}</style>',unsafe_allow_html=True)
+
+hide_streamlit_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            </style>
+            """
+st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
 
 ####LOGIN CODE####
 
@@ -83,7 +95,7 @@ elif st.session_state['logged_in'] == False and st.session_state['create_account
             st.warning("Vul een geldig emailadres in")
             st.stop()
         elif len(pw)<6:
-            st.info("Wachtwoord moet minimaal 6 karakters lang zijn")
+            st.info("Wachtwoord moet minimaal 7 karakters lang zijn")
             st.stop()
         else:
             try:
@@ -100,24 +112,21 @@ elif st.session_state['logged_in'] == False and st.session_state['create_account
 
 
 
-#### add CSS style and hide unneeded streamlit visuals
-with open('dashboard/style.css') as f:
-    st.markdown(f'<style>{f.read()}</style>',unsafe_allow_html=True)
-
-hide_streamlit_style = """
-            <style>
-            #MainMenu {visibility: hidden;}
-            footer {visibility: hidden;}
-            </style>
-            """
-st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
+###ACTUAL APP
 
 
 st.title("Welcome to the App!")
 
+col1,col2,col3 = st.columns(3)
+col1.metric("test0",21)
+col2.metric("test1",25)
+col3.metric("test2",161)
+
+csv_data = st.file_uploader("Plaats hier je Fluvius verbruik bestand",accept_multiple_files=True,type=["csv"])
+
+dt = pd.read_csv(csv_data)
+
+st.write(st)
 
 
 
-
-#SIDEBAR
-period_raw = st.sidebar.selectbox('Periode',['Voorbije 24 uur','Voorbije 2 uur','Voorbije 7 dagen'])

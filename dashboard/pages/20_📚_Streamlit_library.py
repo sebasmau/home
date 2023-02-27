@@ -9,11 +9,25 @@ import time
 import pyrebase
 
 
+####PAGE CONFIG
+
 st.set_page_config(
-    page_title="Sébastien Mauroo",
-    page_icon="🪵",
+    page_title="MeterT",
+    page_icon="⚡",
     layout='wide'
 )
+
+#### add CSS style and hide unneeded streamlit visuals
+with open('dashboard/style.css') as f:
+    st.markdown(f'<style>{f.read()}</style>',unsafe_allow_html=True)
+
+hide_streamlit_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            </style>
+            """
+st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
 
 ####LOGIN CODE####
 
@@ -87,7 +101,7 @@ elif st.session_state['logged_in'] == False and st.session_state['create_account
             st.warning("Vul een geldig emailadres in")
             st.stop()
         elif len(pw)<6:
-            st.info("Wachtwoord moet minimaal 6 karakters lang zijn")
+            st.info("Wachtwoord moet minimaal 7 karakters lang zijn")
             st.stop()
         else:
             try:
@@ -100,19 +114,11 @@ elif st.session_state['logged_in'] == False and st.session_state['create_account
                 st.stop()
     else:
         st.stop()
+    
 
-#### add CSS style and hide unneeded streamlit visuals
-with open('dashboard/style.css') as f:
-    st.markdown(f'<style>{f.read()}</style>',unsafe_allow_html=True)
 
-hide_streamlit_style = """
-            <style>
-            #MainMenu {visibility: hidden;}
-            footer {visibility: hidden;}
-            </style>
-            """
-st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
 
+###ACTUAL APP
 
 
 #### pre-fill session state variables
