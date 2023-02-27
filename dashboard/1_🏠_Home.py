@@ -122,11 +122,14 @@ col1.metric("test0",21)
 col2.metric("test1",25)
 col3.metric("test2",161)
 
-csv_data = st.file_uploader("Plaats hier je Fluvius verbruik bestand",accept_multiple_files=True,type=["csv"])
+uploaded_file = st.file_uploader("Plaats hier je Fluvius verbruik bestand",accept_multiple_files=False,type=["csv"])
 
-dt = pd.read_csv(csv_data)
-
-st.write(st)
+if uploaded_file is not None:
+    try:
+        dt = pd.read_csv(uploaded_file)
+        st.write(st)
+    except:
+        st.warning("Dit is geen gebruikersdata van Fluvius")
 
 
 
