@@ -31,7 +31,7 @@ if 'password_reset' not in st.session_state:
 if 'create_account' not in st.session_state:
         st.session_state['create_account'] = False
 
-if st.session_state['logged_in'] == False and st.session_state['password_reset'] == False:  ###sign in screen 
+if st.session_state['logged_in'] == False and st.session_state['create_account'] == False:  ###sign in screen 
     with st.form("Inloggen"):
         st.subheader("Login")
         email = st.text_input("Emailadres")
@@ -67,7 +67,7 @@ if st.session_state['logged_in'] == False and st.session_state['password_reset']
     else:
         st.stop()
 
-elif st.session_state['logged_in'] == False and st.session_state['password_reset'] == True:  ###create password button
+elif st.session_state['logged_in'] == False and st.session_state['create_account'] == True:  ###create password button
     with st.form("Account aanmaken"):
         st.subheader("Account aanmaken")
         email = st.text_input("Emailadres")
