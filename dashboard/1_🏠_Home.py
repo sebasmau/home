@@ -90,6 +90,7 @@ elif st.session_state['logged_in'] == False and st.session_state['create_account
                 st.session_state['password_reset'] = False
             except:
                 st.info("Aanmaken van een account niet gelukt, probeer later opnieuw")
+                st.stop()
     else:
         st.stop()
     
