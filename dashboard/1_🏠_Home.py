@@ -123,10 +123,10 @@ def interpret_csv_dataset(uploaded_file):
     dt = pd.read_csv(uploaded_file,delimiter=';',decimal=',')
 
     ###get start period
-    dt['start_time'] = pd.to_datetime(dt.iloc[:,0] + " " + dt.iloc[:,1],format='%d/%m/%Y %H:%M:%S')
+    dt['start_time'] = pd.to_datetime(dt.iloc[:,0] + " " + dt.iloc[:,1],format='%d-%m-%Y %H:%M:%S')
 
     ###get end period
-    dt['end_time'] = pd.to_datetime(dt.iloc[:,2] + " " + dt.iloc[:,3],format='%d/%m/%Y %H:%M:%S')
+    dt['end_time'] = pd.to_datetime(dt.iloc[:,2] + " " + dt.iloc[:,3],format='%d-%m-%Y %H:%M:%S')
 
     #get repeated parameters
     EAN_code = dt["EAN"].iloc[0].replace('=','').replace('"','')
