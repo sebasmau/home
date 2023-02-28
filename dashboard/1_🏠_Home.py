@@ -168,7 +168,9 @@ if uploaded_file is not None:
         dt = interpret_csv_dataset(dt)
         st.line_chart(create_graph_data(dt))
     except:
-        st.warning("Dit is geen gebruikersdata van Fluvius")
+        st.error(Exception)
+        #st.warning("Dit is geen gebruikersdata van Fluvius")
+
 
 
 
