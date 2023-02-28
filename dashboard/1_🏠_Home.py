@@ -117,7 +117,7 @@ elif st.session_state['logged_in'] == False and st.session_state['create_account
 
 ###functions
 
-@st.cache_data(show_spinner="Analyseren hoe je geld kan besparen...")
+#@st.cache_data(show_spinner="Analyseren hoe je geld kan besparen...")
 def interpret_csv_dataset(dt):
     ###get start period
     dt['start_time'] = pd.to_datetime(dt.iloc[:,0] + " " + dt.iloc[:,1])
