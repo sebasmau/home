@@ -118,12 +118,15 @@ elif st.session_state['logged_in'] == False and st.session_state['create_account
 ###functions
 
 @st.cache_data(show_spinner="Analyseren hoe je geld kan besparen...")
-def interpret_csv_dataset(dt):
+def interpret_csv_dataset(uploaded_file):
+    ###translate csv into dataframe
+    dt = pd.read_csv(uploaded_file,delimiter=';',decimal=',')
+
     ###get start period
-    dt['start_time'] = pd.to_datetime(dt.iloc[:,0] + " " + dt.iloc[:,1])
+    dt['start_time'] = pd.to_datetime(dt.iloc[:,0] + " " + dt.iloc[:,1],format='%d/%m/%Y')
 
     ###get end period
-    dt['end_time'] = pd.to_datetime(dt.iloc[:,2] + " " + dt.iloc[:,3])
+    dt['end_time'] = pd.to_datetime(dt.iloc[:,2] + " " + dt.iloc[:,3],format='%d/%m/%Y')
 
     #get repeated parameters
     EAN_code = dt["EAN"].iloc[0].replace('=','').replace('"','')
@@ -164,8 +167,7 @@ uploaded_file = st.file_uploader("Plaats hier je Fluvius verbruik bestand",accep
 
 if uploaded_file is not None:
     try:
-        dt = pd.read_csv(uploaded_file,delimiter=';',decimal=',')
-        dt = interpret_csv_dataset(dt)
+        dt = interpret_csv_dataset(uploaded_file)
         st.line_chart(create_graph_data(dt))
     except Exception as e:
         st.write(e)
