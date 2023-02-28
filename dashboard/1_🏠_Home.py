@@ -137,7 +137,7 @@ def interpret_csv_dataset(dt):
     #get rid of useless columns
     dt = dt.dropna()[['start_time','end_time','Volume','Register']]
 
-    st.write(dt)
+    st.write(dt.head(100))
 
     ######injection analysis
 
