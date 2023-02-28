@@ -111,23 +111,62 @@ elif st.session_state['logged_in'] == False and st.session_state['create_account
     
 
 
-
+####################################
 ###ACTUAL APP
+####################################
+
+###functions
+
+@st.cache_data(show_spinner="Analyseren hoe je geld kan besparen...")
+def interpret_csv_dataset(dt):
+    ###get start period
+    dt['start_time'] = pd.to_datetime(dt.iloc[:,0] + " " + dt.iloc[:,1])
+
+    ###get end period
+    dt['end_time'] = pd.to_datetime(dt.iloc[:,2] + " " + dt.iloc[:,3])
+
+    #get repeated parameters
+    EAN_code = dt["EAN"].iloc[0].replace('=','').replace('"','')
+    Meter_code = dt["Meter"].iloc[0]
+    Meter_type = dt["Metertype"].iloc[0]
+    Power_unit = dt["Eenheid"].iloc[0]
+    Time_unit = (dt["end_time"].iloc[0] - dt["start_time"].iloc[0]).seconds/60 ##15 bij kwartier waarden, 60 bij uurwaarden
+    Data_period = (dt["start_time"].iloc[-1] - dt["start_time"].iloc[0]).round('d').days
+
+    #get rid of useless columns
+    dt = dt.dropna()[['start_time','end_time','Volume','Register']]
+
+    ######injection analysis
+
+    #Estimated solar capacity
+    var1 = dt[dt['Register'].str.contains('Injectie')]['Volume'].nlargest(3) ###largest 3 injectinos
+    Estimated_generation_capacity = var1.mean()*60/Time_unit ###60/Time_unit converts kWh towards kW
+
+    #Has solar panels
+    Has_solar_panels = True if Estimated_generation_capacity >= 0.6 else False  ###2 solar panels = +-600W
+
+    return dt
+
+@st.cache_data(show_spinner="Analyseren hoe je geld kan besparen...")
+def create_graph_data(dt):
+    graphtable = dt.pivot_table(index='end_time', columns='Register', values='Volume',aggfunc='mean').fillna(0)
+    graphtable['Afname'] = graphtable['Afname Dag'] + graphtable['Afname Nacht']
+    graphtable['Injectie'] = graphtable['Injectie Dag'] + graphtable['Injectie Nacht']
+    return graphtable[['Afname','Injectie']]
 
 
-st.title("Welcome to the App!")
+st.title("Welcome bij MeterT 👋")
+st.write("\n")
 
-col1,col2,col3 = st.columns(3)
-col1.metric("test0",21)
-col2.metric("test1",25)
-col3.metric("test2",161)
+
 
 uploaded_file = st.file_uploader("Plaats hier je Fluvius verbruik bestand",accept_multiple_files=False,type=["csv"])
 
 if uploaded_file is not None:
     try:
         dt = pd.read_csv(uploaded_file,delimiter=';')
-        st.write(st)
+        dt = interpret_csv_dataset(dt)
+        st.line_chart(create_graph_data(dt))
     except:
         st.warning("Dit is geen gebruikersdata van Fluvius")
 
