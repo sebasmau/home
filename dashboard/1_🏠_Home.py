@@ -132,18 +132,13 @@ def interpret_csv_dataset(dt):
     Power_unit = dt["Eenheid"].iloc[0]
     Time_unit = (dt["end_time"].iloc[0] - dt["start_time"].iloc[0]).seconds/60 ##15 bij kwartier waarden, 60 bij uurwaarden
     Data_period = (dt["start_time"].iloc[-1] - dt["start_time"].iloc[0]).round('d').days
-    st.write(Time_unit)
 
     #get rid of useless columns
     dt = dt.dropna()[['start_time','end_time','Volume','Register']]
 
-    dt = dt.head(100)
-
     ######injection analysis
 
     #Estimated solar capacity
-    st.write(dt[dt['Register'].str.contains('Injectie')]['Volume'])
-    st.write(type(dt[dt['Register'].str.contains('Injectie')]['Volume']))
     var1 = dt[dt['Register'].str.contains('Injectie')]['Volume'].nlargest(3) ###largest 3 injectinos
     Estimated_generation_capacity = var1.mean()*60/Time_unit ###60/Time_unit converts kWh towards kW
 
@@ -169,7 +164,7 @@ uploaded_file = st.file_uploader("Plaats hier je Fluvius verbruik bestand",accep
 
 if uploaded_file is not None:
     try:
-        dt = pd.read_csv(uploaded_file,delimiter=';')
+        dt = pd.read_csv(uploaded_file,delimiter=';',decimal=',')
         dt = interpret_csv_dataset(dt)
         st.line_chart(create_graph_data(dt))
     except Exception as e:
