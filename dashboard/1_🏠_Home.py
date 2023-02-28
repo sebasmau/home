@@ -117,6 +117,9 @@ elif st.session_state['logged_in'] == False and st.session_state['create_account
 
 ###functions
 
+if 'correct_csv_uploaded' not in st.session_state:
+        st.session_state['correct_csv_uploaded'] = False
+
 @st.cache_data(show_spinner="Analyseren hoe je geld kan besparen...")
 def interpret_csv_dataset(uploaded_file):
     ###translate csv into dataframe
@@ -158,6 +161,8 @@ def create_graph_data(dt):
     return graphtable[['Afname','Injectie']]
 
 
+####actual app
+
 st.title("Welcome bij MeterT 👋")
 st.write("\n")
 
@@ -165,13 +170,17 @@ st.write("\n")
 
 uploaded_file = st.file_uploader("Plaats hier je Fluvius verbruik bestand",accept_multiple_files=False,type=["csv"])
 
+
+##initialize data upload
 if uploaded_file is not None:
     try:
         dt = interpret_csv_dataset(uploaded_file)
-        st.line_chart(create_graph_data(dt))
+        st.session_state['correct_csv_uploaded'] = True
     except Exception as e:
-        st.write(e)
-        #st.warning("Dit is geen gebruikersdata van Fluvius")
+        st.warning("Dit is geen gebruikersdata van Fluvius")
+
+if st.session_state['correct_csv_uploaded'] == True:
+    st.line_chart(create_graph_data(dt))
 
 
 
