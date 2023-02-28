@@ -167,8 +167,8 @@ if uploaded_file is not None:
         dt = pd.read_csv(uploaded_file,delimiter=';')
         dt = interpret_csv_dataset(dt)
         st.line_chart(create_graph_data(dt))
-    except:
-        Exception
+    except Exception as e:
+        st.write(e)
         #st.warning("Dit is geen gebruikersdata van Fluvius")
 
 
