@@ -142,6 +142,8 @@ def interpret_csv_dataset(dt):
     ######injection analysis
 
     #Estimated solar capacity
+    st.write(dt[dt['Register'].str.contains('Injectie')]['Volume'])
+    st.write(type(dt[dt['Register'].str.contains('Injectie')]['Volume']))
     var1 = dt[dt['Register'].str.contains('Injectie')]['Volume'].nlargest(3) ###largest 3 injectinos
     Estimated_generation_capacity = var1.mean()*60/Time_unit ###60/Time_unit converts kWh towards kW
 
