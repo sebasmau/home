@@ -46,11 +46,6 @@ if st.session_state['logged_in'] == False and st.session_state['create_account']
         pw = st.text_input("Wachtwoord", type="password")
         login = st.form_submit_button("Login",type="primary")
     
-    ####button to show create account instead
-    if st.button("Account aanmaken"):
-        st.session_state['password_reset'] = False
-        st.session_state['create_account'] = True
-        st.experimental_rerun()
 
     if login:
         try:
@@ -70,6 +65,15 @@ if st.session_state['logged_in'] == False and st.session_state['create_account']
             except:
                 st.markdown(f"Niet mogelijk om een email te sturen naar: {email}, probeer later opnieuw")
     
+
+    ####button to show create account instead
+    if st.button("Account aanmaken"):
+        st.session_state['password_reset'] = False
+        st.session_state['create_account'] = True
+        st.experimental_rerun()
+
+    
+    ####rerun script to show real page after succesfull login
     if st.session_state['logged_in'] == True:
         st.experimental_rerun()
     else:
