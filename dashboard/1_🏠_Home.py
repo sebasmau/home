@@ -63,7 +63,7 @@ if st.session_state['logged_in'] == False and st.session_state['create_account']
                 st.markdown(f"Email verzonden naar {email}")
                 st.caption(f"Deze email kan ook in je spam folder te vinden zijn")
             except:
-                st.markdown(f"Niet mogelijk om een email te sturen naar: {email}, probeer later opnieuw")
+                st.info(f"Niet mogelijk om een email te sturen naar: {email}, probeer later opnieuw")
     
 
     ####button to show create account instead
@@ -84,7 +84,7 @@ elif st.session_state['logged_in'] == False and st.session_state['create_account
         st.subheader("Account aanmaken")
         email = st.text_input("Emailadres")
         pw = st.text_input("Wachtwoord", type="password")
-        login = st.form_submit_button("Enter")
+        login = st.form_submit_button("Enter",type="primary")
 
     ####button to show login screen instead
 
