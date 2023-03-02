@@ -44,7 +44,7 @@ if st.session_state['logged_in'] == False and st.session_state['create_account']
         st.subheader("Login")
         email = st.text_input("Emailadres")
         pw = st.text_input("Wachtwoord", type="password")
-        login = st.form_submit_button("Login")
+        login = st.form_submit_button("Login",type="primary")
     
     ####button to show create account instead
     if st.button("Account aanmaken"):
@@ -102,10 +102,10 @@ elif st.session_state['logged_in'] == False and st.session_state['create_account
                 signin = st.session_state['firebase'].auth().create_user_with_email_and_password(email,pw)
                 st.session_state['logged_in'] = True
                 st.session_state['password_reset'] = False
-                st.experimental_rerun()
             except:
                 st.info("Aanmaken van een account niet gelukt, probeer later opnieuw")
                 st.stop()
+        st.experimental_rerun()
     else:
         st.stop()
     
