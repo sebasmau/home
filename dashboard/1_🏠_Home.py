@@ -30,6 +30,9 @@ if 'firebase' not in st.session_state:
         config = {"apiKey":st.secrets["firebase_credentials"]["apiKey"],"authDomain":st.secrets["firebase_credentials"]["authDomain"],"storageBucket":st.secrets["firebase_credentials"]["storageBucket"],"databaseURL":st.secrets["firebase_credentials"]["databaseURL"]}
         st.session_state['firebase'] = pyrebase.initialize_app(config)
 
+if 'UserID' not in st.session_state:
+        st.session_state['userID'] = None
+
 if 'logged_in' not in st.session_state:
         st.session_state['logged_in'] = False
 
@@ -52,6 +55,7 @@ if st.session_state['logged_in'] == False and st.session_state['create_account']
             signin = st.session_state['firebase'].auth().sign_in_with_email_and_password(email,pw)
             st.session_state['logged_in'] = True
             st.session_state['password_reset'] = False
+            st.session_state['userID'] = signin['idToken']
         except:
             st.error("verkeerd wachtwoord")
             st.session_state['password_reset'] = True
@@ -106,6 +110,7 @@ elif st.session_state['logged_in'] == False and st.session_state['create_account
                 signin = st.session_state['firebase'].auth().create_user_with_email_and_password(email,pw)
                 st.session_state['logged_in'] = True
                 st.session_state['password_reset'] = False
+                st.session_state['userID'] = signin['idToken']
             except:
                 st.info("Aanmaken van een account niet gelukt, probeer later opnieuw")
                 st.stop()
@@ -149,12 +154,14 @@ def interpret_csv_dataset(uploaded_file):
     ######injection analysis
 
     #Estimated solar capacity
-    var1 = dt[dt['Register'].str.contains('Injectie')]['Volume'].nlargest(3) ###largest 3 injectinos
+    var1 = dt[dt['Register'].str.contains('Injectie')]['Volume'].nlargest(3) ###largest 3 injections found
     Estimated_generation_capacity = var1.mean()*60/Time_unit ###60/Time_unit converts kWh towards kW
 
     #Has solar panels
     Has_solar_panels = True if Estimated_generation_capacity >= 0.6 else False  ###2 solar panels = +-600W
 
+
+    #write to database
     return dt
 
 @st.cache_data(show_spinner="Analyseren hoe je geld kan besparen...")
