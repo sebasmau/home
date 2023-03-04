@@ -1,6 +1,7 @@
 import streamlit as st
 import pyrebase
 import time
+import pandas as pd
 
 ####PAGE CONFIG
 
@@ -118,46 +119,77 @@ elif st.session_state['logged_in'] == False and st.session_state['create_account
 ###ACTUAL APP
 
 
-tab1, tab2, tab3 = st.tabs(["Algemene instellingen", "Mijn electriciteits leverancier", "Mijn elektrische installatie"])
+tab1, tab2 = st.tabs(["Fluvius - Digitale meter", "Invencado Smart Meter"])
 
 
 with tab1:
-    st.write("#### Algemene gegevens")
-    st.text_input('Mijn adres',placeholder='Bijvoorbeeld: Koekoekstraat 70, Melle')
-    st.selectbox("Energie audit: details",options=["Normaal","Geef me alle technische details!"])
+    if 'uploaded_dataframe' not in st.session_state:
+        st.session_state['uploaded_dataframe'] = None
+
+    @st.cache_data(show_spinner="Analyseren hoe je geld kan besparen...")
+    def interpret_csv_dataset(uploaded_file):
+        ###translate csv into dataframe
+        dt = pd.read_csv(uploaded_file,delimiter=';',decimal=',')
+
+        ###get start period
+        dt['start_time'] = pd.to_datetime(dt.iloc[:,0] + " " + dt.iloc[:,1],format='%d-%m-%Y %H:%M:%S')
+
+        ###get end period
+        dt['end_time'] = pd.to_datetime(dt.iloc[:,2] + " " + dt.iloc[:,3],format='%d-%m-%Y %H:%M:%S')
+
+        #get repeated parameters
+        EAN_code = dt["EAN"].iloc[0].replace('=','').replace('"','')
+        Meter_code = dt["Meter"].iloc[0]
+        Meter_type = dt["Metertype"].iloc[0]
+        Power_unit = dt["Eenheid"].iloc[0]
+        Time_unit = (dt["end_time"].iloc[0] - dt["start_time"].iloc[0]).seconds/60 ##15 bij kwartier waarden, 60 bij uurwaarden
+        Data_period = (dt["start_time"].iloc[-1] - dt["start_time"].iloc[0]).round('d').days
+
+        #get rid of useless columns
+        dt = dt.dropna()[['start_time','end_time','Volume','Register']]
+
+        ######injection analysis
+
+        #Estimated solar capacity
+        var1 = dt[dt['Register'].str.contains('Injectie')]['Volume'].nlargest(3) ###largest 3 injections found
+        Estimated_generation_capacity = var1.mean()*60/Time_unit ###60/Time_unit converts kWh towards kW
+
+        #Has solar panels
+        Has_solar_panels = True if Estimated_generation_capacity >= 0.6 else False  ###2 solar panels = +-600W
+
+
+        #write to database
+        return dt
+
+    @st.cache_data(show_spinner="Analyseren hoe je geld kan besparen...")
+    def create_graph_data(dt):
+        graphtable = dt.pivot_table(index='end_time', columns='Register', values='Volume',aggfunc='mean').fillna(0)
+        graphtable['Afname'] = graphtable['Afname Dag'] + graphtable['Afname Nacht']
+        graphtable['Injectie'] = graphtable['Injectie Dag'] + graphtable['Injectie Nacht']
+        return graphtable[['Afname','Injectie']]
+
+
+    ####actual app
+
+    st.title("Welcome bij MeterT 👋")
+    st.write("\n")
+
+
+
+    uploaded_file = st.file_uploader("Plaats hier je Fluvius verbruik bestand",accept_multiple_files=False,type=["csv"])
+
+
+    ##initialize data upload
+    if uploaded_file is not None:
+        try:
+            st.session_state['uploaded_dataframe'] = interpret_csv_dataset(uploaded_file)
+        except Exception as e:
+            st.warning("Dit is geen gebruikersdata van Fluvius")
+
+    if st.session_state['uploaded_dataframe'] is not None:
+        st.line_chart(create_graph_data(st.session_state['uploaded_dataframe']))
 
 
 
 with tab2:
-    st.write("#### Energie leverancier")
-    lev = st.selectbox('Wie is uw huidige energie leverancier',['Engie Electrabel','Luminus',"Mega","Total Energies","Eneco","Bolt",'Ik weet het niet','Andere'])
-    if lev == "Luminus":
-        contract = st.selectbox('Wat is uw huidig contract?',['Afzetterij ECO','Afzetterij Premium'])
-
-    st.select_slider("Bent u tevreden van uw huidige energie leverancier?",['Niet tevreden','Eerder niet tevreden',"Neutraal","Tevreden","Zeer tevreden"],value='Neutraal')
-
-    st.write("#### Energie prijs")
-    typetarief = st.selectbox('Heeft u een dag/nacht tarief of een dag tarief',['Dag/Nacht tarief','Dag tarief','Ik weet het niet','Andere'])
-
-    if typetarief == 'Dag/Nacht tarief':
-        st.slider("Dag tarief (€)",min_value=0.0,max_value=1.5,value=0.90)
-        st.slider("Nacht tarief (€)",min_value=0.0,max_value=1.5,value = 0.60)
-        st.slider("Injectie tarief (€)",min_value=0.0,max_value=1.5,value = 0.40)
-    elif typetarief == 'Dag tarief':
-        st.slider("tarief (€)",min_value=0.0,max_value=1.5,value=0.70)
-        st.slider("Injectie tarief (€)",min_value=0.0,max_value=1.5,value = 0.40)
-
-with tab3:
-    st.write("#### Zonnepanelen")
-    zonp = st.selectbox('Heeft u zonnepanelen',['Ik heb geen zonnepanelen','Ik heb zonnepanelen','ik wil graag zonnepanelen'])
-    if zonp == 'Ik heb zonnepanelen':
-        st.number_input('Aantal zonnepanelen', 0,20)
-        st.slider('Vermogen per zonnepaneel (Wp)',200,500,step=10,value=350)
-
-    st.write("#### Thuisbatterij")
-    zonp = st.selectbox('Heeft u een thuisbatterij',['Ik heb geen thuisbatterij','Ik heb een thuisbatterij','ik wil graag een thuisbatterij'])
-
-if st.button("Gegevens opslaan"): 
-    #with open('users.yaml', 'w') as f:
-    #data = yaml.dump(config, f)
-    st.balloons()
+    st.write("te bespreken met Brecht")

@@ -1,6 +1,7 @@
 import streamlit as st
 import pyrebase
 import time
+import webbrowser
 
 ####PAGE CONFIG
 
@@ -118,46 +119,48 @@ elif st.session_state['logged_in'] == False and st.session_state['create_account
 ###ACTUAL APP
 
 
-tab1, tab2, tab3 = st.tabs(["Algemene instellingen", "Mijn electriciteits leverancier", "Mijn elektrische installatie"])
+def solarpanels():
+    years = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25]
+    fixed_investment = 2130
+    variable_investment = 422
+    price_high = 0.5
+    price_low = 0.3
+    self_consumption = 0.3
+    kWh_year_solarpanel = 293
+    CO2_kWh = 300
+    with st.expander(label='Zonnepanelen'):
+        solarcol1,solarcol2 = st.columns([1.1,2])
+
+        solarcol1.write("### Zonnepanelen")
+        solarpanels = solarcol1.number_input('Optimaal aantal zonnepanelen',min_value= 6,max_value=30, value=12)
+
+        
+        solarinvestment = solarpanels * variable_investment + fixed_investment
+        profit = [round(i * (solarpanels*kWh_year_solarpanel*(price_high*self_consumption+price_low*(1-self_consumption)))-solarinvestment) for i in years]
+        solarcol2.write("### Terugverdientijd")
+        source = pd.DataFrame({"Jaren":years,"Winst (€)":profit})#.set_index("Jaren")
+        chartalt = alt.Chart(source).mark_bar().encode(
+            x="Jaren:O",
+            y="Winst (€):Q",
+            # The highlight will be set on the result of a conditional statement
+            color=alt.condition(
+                alt.datum["Winst (€)"] > 0,  # If the year is 1810 this test returns True,
+                alt.value('#90ee90'),     # which sets the bar orange.
+                alt.value('red')   # And if it's not true it sets the bar steelblue.
+            )
+        ).properties(height=450)
+        solarcol2.altair_chart(chartalt, use_container_width=True)
+        #solarcol2.bar_chart(source.set_index("Jaren"),height=500)
 
 
-with tab1:
-    st.write("#### Algemene gegevens")
-    st.text_input('Mijn adres',placeholder='Bijvoorbeeld: Koekoekstraat 70, Melle')
-    st.selectbox("Energie audit: details",options=["Normaal","Geef me alle technische details!"])
+        solarcol1.metric("Geschatte prijs voor deze installatie",f"{solarinvestment} €")
+        solarcol1.metric("Terugverdientijd",f"{round(solarinvestment / (solarpanels*kWh_year_solarpanel*(price_high*self_consumption+price_low*(1-self_consumption))),1)} jaar")
+        solarcol1.metric("Winst na 25 jaar",f"{round(profit[24])} €")
+        solarcol1.metric("CO2 besparing na 25 jaar",f"{round(solarpanels*kWh_year_solarpanel*CO2_kWh*25/1000)} kg")
+        if solarcol1.button('Meer info?'):
+            webbrowser.open_new_tab("https://www.hs-powersolutions.be/")
 
-
-
-with tab2:
-    st.write("#### Energie leverancier")
-    lev = st.selectbox('Wie is uw huidige energie leverancier',['Engie Electrabel','Luminus',"Mega","Total Energies","Eneco","Bolt",'Ik weet het niet','Andere'])
-    if lev == "Luminus":
-        contract = st.selectbox('Wat is uw huidig contract?',['Afzetterij ECO','Afzetterij Premium'])
-
-    st.select_slider("Bent u tevreden van uw huidige energie leverancier?",['Niet tevreden','Eerder niet tevreden',"Neutraal","Tevreden","Zeer tevreden"],value='Neutraal')
-
-    st.write("#### Energie prijs")
-    typetarief = st.selectbox('Heeft u een dag/nacht tarief of een dag tarief',['Dag/Nacht tarief','Dag tarief','Ik weet het niet','Andere'])
-
-    if typetarief == 'Dag/Nacht tarief':
-        st.slider("Dag tarief (€)",min_value=0.0,max_value=1.5,value=0.90)
-        st.slider("Nacht tarief (€)",min_value=0.0,max_value=1.5,value = 0.60)
-        st.slider("Injectie tarief (€)",min_value=0.0,max_value=1.5,value = 0.40)
-    elif typetarief == 'Dag tarief':
-        st.slider("tarief (€)",min_value=0.0,max_value=1.5,value=0.70)
-        st.slider("Injectie tarief (€)",min_value=0.0,max_value=1.5,value = 0.40)
-
-with tab3:
-    st.write("#### Zonnepanelen")
-    zonp = st.selectbox('Heeft u zonnepanelen',['Ik heb geen zonnepanelen','Ik heb zonnepanelen','ik wil graag zonnepanelen'])
-    if zonp == 'Ik heb zonnepanelen':
-        st.number_input('Aantal zonnepanelen', 0,20)
-        st.slider('Vermogen per zonnepaneel (Wp)',200,500,step=10,value=350)
-
-    st.write("#### Thuisbatterij")
-    zonp = st.selectbox('Heeft u een thuisbatterij',['Ik heb geen thuisbatterij','Ik heb een thuisbatterij','ik wil graag een thuisbatterij'])
-
-if st.button("Gegevens opslaan"): 
-    #with open('users.yaml', 'w') as f:
-    #data = yaml.dump(config, f)
-    st.balloons()
+    
+    
+    st.write("#### Top besparingstips voor jou")
+    solarpanels()
