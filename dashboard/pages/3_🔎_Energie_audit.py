@@ -2,6 +2,7 @@ import streamlit as st
 import pyrebase
 import time
 import webbrowser
+import altair as alt
 
 ####PAGE CONFIG
 
