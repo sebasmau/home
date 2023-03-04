@@ -162,5 +162,5 @@ def solarpanels():
 
     
     
-    st.write("#### Top besparingstips voor jou")
-    solarpanels()
+st.write("#### Top besparingstips voor jou")
+solarpanels()
