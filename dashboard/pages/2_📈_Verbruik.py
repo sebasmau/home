@@ -30,6 +30,9 @@ if 'firebase' not in st.session_state:
         config = {"apiKey":st.secrets["firebase_credentials"]["apiKey"],"authDomain":st.secrets["firebase_credentials"]["authDomain"],"storageBucket":st.secrets["firebase_credentials"]["storageBucket"],"databaseURL":st.secrets["firebase_credentials"]["databaseURL"]}
         st.session_state['firebase'] = pyrebase.initialize_app(config)
 
+if 'UserID' not in st.session_state:
+        st.session_state['userID'] = None
+
 if 'logged_in' not in st.session_state:
         st.session_state['logged_in'] = False
 
@@ -52,6 +55,7 @@ if st.session_state['logged_in'] == False and st.session_state['create_account']
             signin = st.session_state['firebase'].auth().sign_in_with_email_and_password(email,pw)
             st.session_state['logged_in'] = True
             st.session_state['password_reset'] = False
+            st.session_state['userID'] = signin['idToken']
         except:
             st.error("verkeerd wachtwoord")
             st.session_state['password_reset'] = True
@@ -106,6 +110,7 @@ elif st.session_state['logged_in'] == False and st.session_state['create_account
                 signin = st.session_state['firebase'].auth().create_user_with_email_and_password(email,pw)
                 st.session_state['logged_in'] = True
                 st.session_state['password_reset'] = False
+                st.session_state['userID'] = signin['idToken']
             except:
                 st.info("Aanmaken van een account niet gelukt, probeer later opnieuw")
                 st.stop()
@@ -192,4 +197,18 @@ with tab1:
 
 
 with tab2:
-    st.write("te bespreken met Brecht")
+    st.title("te bespreken met Brecht")
+    with st.form("Maak verbinding met je '"'Invencado Smart Meter'"'"):
+        st.subheader("Maak verbinding met je '"'Invencado Smart Meter'"'")
+        mac_address = st.text_input("Meternummer",placeholder="Bijvoorbeeld: '7ab0ae642979'",help="Je meternummer kan je terugvinden op je Invencado Smart Meter, het is de code die op de kabel geschreven is")
+        challenge_code = st.text_input("Wachtwoord", type="password",help="De beveiligingscode kan je terugvinden op het instructieformulier die bij de meter in de doos zat (momenteel is dit 123)")
+        connect_to_meter = st.form_submit_button("Verbinding maken",type="primary")
+
+    if connect_to_meter:
+        try:
+            all_existing_meter_macs = (st.session_state['firebase'].database().child("metermac").shallow().get().val()) ##get all key values (shallow), and then make a readable list out of the val() you read
+            if mac_address in all_existing_meter_macs:
+                st.succes("Adding this meter is possible")
+        except:
+            st.error("Deze meter is al in gebruik door iemand anders")
+         

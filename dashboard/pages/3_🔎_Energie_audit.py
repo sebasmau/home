@@ -32,6 +32,9 @@ if 'firebase' not in st.session_state:
         config = {"apiKey":st.secrets["firebase_credentials"]["apiKey"],"authDomain":st.secrets["firebase_credentials"]["authDomain"],"storageBucket":st.secrets["firebase_credentials"]["storageBucket"],"databaseURL":st.secrets["firebase_credentials"]["databaseURL"]}
         st.session_state['firebase'] = pyrebase.initialize_app(config)
 
+if 'UserID' not in st.session_state:
+        st.session_state['userID'] = None
+
 if 'logged_in' not in st.session_state:
         st.session_state['logged_in'] = False
 
@@ -54,6 +57,7 @@ if st.session_state['logged_in'] == False and st.session_state['create_account']
             signin = st.session_state['firebase'].auth().sign_in_with_email_and_password(email,pw)
             st.session_state['logged_in'] = True
             st.session_state['password_reset'] = False
+            st.session_state['userID'] = signin['idToken']
         except:
             st.error("verkeerd wachtwoord")
             st.session_state['password_reset'] = True
@@ -108,6 +112,7 @@ elif st.session_state['logged_in'] == False and st.session_state['create_account
                 signin = st.session_state['firebase'].auth().create_user_with_email_and_password(email,pw)
                 st.session_state['logged_in'] = True
                 st.session_state['password_reset'] = False
+                st.session_state['userID'] = signin['idToken']
             except:
                 st.info("Aanmaken van een account niet gelukt, probeer later opnieuw")
                 st.stop()
