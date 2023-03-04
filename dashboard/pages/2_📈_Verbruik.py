@@ -206,10 +206,8 @@ with tab2:
     if connect_to_meter:
         try:
             all_existing_meter_macs = list(st.session_state['firebase'].database().child("metermac").shallow().get().val()) ##get all key values (shallow), and then make a readable list out of the val() you read
-            st.write(all_existing_meter_macs)
-            st.write(type(all_existing_meter_macs))
             if mac_address in all_existing_meter_macs:
-                st.succes("Deze meter is actief, maar kan nog geen data doorsturen naar deze website")
+                st.success("Deze meter is actief, maar kan nog geen data doorsturen naar deze website")
             elif challenge_code != "123":
                 st.error("Verkeerde challenge code (tip het is 123)")
         except:
