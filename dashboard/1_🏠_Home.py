@@ -124,17 +124,57 @@ elif st.session_state['logged_in'] == False and st.session_state['create_account
 ###ACTUAL APP
 ####################################
 
-###functions
+####methods
 
-col1,col2,col3 = st.columns(3)
-col1.metric("Energie verbruik",f"22 kWh","+2%")
-col2.metric("CO2 uitstoot",f"110 g","-25%")
-col3.metric("Energie injectie",f"115 kWh", "-13%")
+def switch_page(page_name: str):
+    from streamlit import _RerunData, _RerunException
+    from streamlit.source_util import get_pages
 
-st.write("# Welkom op uw Invencado Dashboard! 👋")
+    def standardize_name(name: str) -> str:
+        return name.lower().replace("_", " ")
+    
+    page_name = standardize_name(page_name)
+
+    pages = get_pages("1_🏠_Home.py")  # OR whatever your main page is called
+
+    for page_hash, config in pages.items():
+        if standardize_name(config["page_name"]) == page_name:
+            raise _RerunException(
+                _RerunData(
+                    page_script_hash=page_hash,
+                    page_name=page_name,
+                )
+            )
+
+    page_names = [standardize_name(config["page_name"]) for config in pages.values()]
+
+    raise ValueError(f"Could not find page {page_name}. Must be one of {page_names}")
 
 
-#st.area_chart(df[['Injectie (W)','Verbruik (W)']])
+
+
+#####
+st.write("# Welkom op uw Metert Dashboard! 👋")
+metcol1,metcol2,metcol3 = st.columns(3)
+metcol1.metric("Energie verbruik",f"22 kWh","+2%")
+metcol2.metric("CO2 uitstoot",f"110 g","-25%")
+metcol3.metric("Energie injectie",f"115 kWh", "-13%")
+
+
+
+col1,col2,col3,col4 = st.columns(4)
+if col1.button("Huidig verbruik",use_container_width=True):
+     switch_page("2_📈_Verbruik.py")
+
+if col2.button("Energie audit",use_container_width=True):
+     switch_page("3_🔎_Energie_audit.py")
+
+if col2.button("MeterT website",use_container_width=True):
+     switch_page("2_📈_Verbruik.py")
+
+if col2.button("Fluvius website",use_container_width=True):
+     switch_page("2_📈_Verbruik.py")
+
 
 
 
