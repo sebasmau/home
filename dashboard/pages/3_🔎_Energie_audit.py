@@ -3,6 +3,7 @@ import pyrebase
 import time
 import webbrowser
 import altair as alt
+import pandas as pd
 
 ####PAGE CONFIG
 
