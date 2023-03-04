@@ -207,6 +207,7 @@ with tab2:
     if connect_to_meter:
         try:
             all_existing_meter_macs = (st.session_state['firebase'].database().child("metermac").shallow().get().val()) ##get all key values (shallow), and then make a readable list out of the val() you read
+            st.write(all_existing_meter_macs)
             if mac_address in all_existing_meter_macs:
                 st.succes("Adding this meter is possible")
         except:
