@@ -149,7 +149,7 @@ with tab1:
         EAN_data['Power_unit'] = dt["Eenheid"].iloc[0]
         EAN_data['Time_unit (m)'] = (dt["end_time"].iloc[0] - dt["start_time"].iloc[0]).seconds/60 ##15 bij kwartier waarden, 60 bij uurwaarden
         EAN_data['Available_period (d)'] = (dt["start_time"].iloc[-1] - dt["start_time"].iloc[0]).round('d').days
-        EAN_data['start_time'] = dt["end_time"].iloc[0].strftime('%d-%m-%Y %H:%M:%S')
+        EAN_data['start_time'] = dt["start_time"].iloc[0].strftime('%d-%m-%Y %H:%M:%S')
         EAN_data['end_time'] = dt["end_time"].iloc[-1].strftime('%d-%m-%Y %H:%M:%S')
 
         #get rid of useless columns
@@ -159,6 +159,24 @@ with tab1:
         largest_injections = dt[dt['Register'].str.contains('Injectie')]['Volume'].nlargest(5) ###largest 5 injections found
         EAN_data['Estimated_generation_capacity (kW)'] = largest_injections.mean()*60/EAN_data['Time_unit (m)'] ###60/Time_unit converts kWh towards kW
         EAN_data['Has_solar_panels'] = True if EAN_data['Estimated_generation_capacity (kW)'] >= 0.6 else False  ###2 solar panels = +-600W
+
+
+        #get injection and usage
+        EAN_data['Afname Dag (kW)'] = dt[dt['Register'].str.contains('Afname Dag')]['Volume'].sum()*60/EAN_data['Time_unit (m)'] ###60/Time_unit converts kWh towards kW
+        EAN_data['Afname Nacht (kW)'] = dt[dt['Register'].str.contains('Afname Nacht')]['Volume'].sum()*60/EAN_data['Time_unit (m)'] ###60/Time_unit converts kWh towards kW
+        EAN_data['Injectie Dag (kW)'] = dt[dt['Register'].str.contains('Injectie Dag')]['Volume'].sum()*60/EAN_data['Time_unit (m)'] ###60/Time_unit converts kWh towards kW
+        EAN_data['Injectie Nacht (kW)'] = dt[dt['Register'].str.contains('Injectie Nacht')]['Volume'].sum()*60/EAN_data['Time_unit (m)'] ###60/Time_unit converts kWh towards kW
+        EAN_data['Afname Nacht 0.05 quintiel (kW)'] = dt[dt['Register'].str.contains('Afname Nacht')]['Volume'].quantile(0.05)*60/EAN_data['Time_unit (m)'] ###60/Time_unit converts kWh towards kW
+        vart = dt.set_index('start_time').between_time('10:00','16:00')
+        EAN_data['Afname Dag 10:00-16:00 (kW)'] = vart[vart['Register'].str.contains('Afname Dag')]['Volume'].sum()*60/EAN_data['Time_unit (m)'] ###60/Time_unit converts kWh towards kW
+        EAN_data['Injectie Dag 10:00-16:00 (kW)'] = vart[vart['Register'].str.contains('Injectie Dag')]['Volume'].sum()*60/EAN_data['Time_unit (m)'] ###60/Time_unit converts kWh towards kW
+
+        #get peak percentile sensitivity
+        sensitivity = [0.9,0.95,0.99,0.999,0.9999,1]
+        afname_piek = []
+        for i in sensitivity:
+            afname_piek.append(dt[dt['Register'].str.contains('Afname')]['Volume'].quantile(i)*60/EAN_data['Time_unit (m)'])
+        EAN_data['Afname piek (kW)'] = afname_piek
 
 
         #write to database
@@ -184,7 +202,7 @@ with tab1:
     if uploaded_file is not None:
         try:
             interpret_csv_dataset(uploaded_file)
-            st.success("Analyseren naar hoe je geld kan besparen wassuccesvol, de resultaten kan je zien bij '"'🔎 Energie audit'"'")
+            st.success("Analyseren naar hoe je geld kan besparen was succesvol, de resultaten kan je zien bij '"'🔎 Energie audit'"'")
             st.balloons()
         except:
             st.warning("Deze data kon niet ingelezen worden, de juiste data kan je vinden op de website van [Fluvius](https://www.fluvius.be/nl/thema/meters-en-meterstanden/digitale-meter/hoe-mijn-energieverbruik-online-raadplegen)")
