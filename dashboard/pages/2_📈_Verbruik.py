@@ -24,7 +24,6 @@ hide_streamlit_style = """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
 
 ####LOGIN CODE####
-st.write(st.session_state['userID'])
 
 if 'firebase' not in st.session_state:
         config = {"apiKey":st.secrets["firebase_credentials"]["apiKey"],"authDomain":st.secrets["firebase_credentials"]["authDomain"],"storageBucket":st.secrets["firebase_credentials"]["storageBucket"],"databaseURL":st.secrets["firebase_credentials"]["databaseURL"]}
@@ -41,6 +40,8 @@ if 'password_reset' not in st.session_state:
 
 if 'create_account' not in st.session_state:
         st.session_state['create_account'] = False
+
+st.write(st.session_state['userID'])
 
 if st.session_state['logged_in'] == False and st.session_state['create_account'] == False:  ###sign in screen 
     with st.form("Inloggen"):
