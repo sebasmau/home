@@ -56,6 +56,8 @@ if st.session_state['logged_in'] == False and st.session_state['create_account']
             st.session_state['logged_in'] = True
             st.session_state['password_reset'] = False
             st.session_state['userID'] = signin['localId']
+            st.write(signin['localId'])
+            st.write(signin)
         except:
             st.error("verkeerd wachtwoord")
             st.session_state['password_reset'] = True
@@ -78,7 +80,11 @@ if st.session_state['logged_in'] == False and st.session_state['create_account']
 
     
     ####rerun script to show real page after succesfull login
-    if st.session_state['logged_in'] == True:
+    if st.session_state['logged_in']:
+        st.write(st.session_state['logged_in'])
+        st.write(st.session_state['password_reset'])
+        st.write(st.session_state['userID'])
+        time.sleep(20)
         st.experimental_rerun()
     else:
         st.stop()
@@ -208,7 +214,7 @@ with tab1:
     if uploaded_file is not None:
         try:
             interpret_csv_dataset(uploaded_file)
-            st.success("Analyseren naar hoe je geld kan besparen was succesvol, de resultaten kan je zien bij '"'🔎 Energie audit'"'")
+            st.success("Analyse naar hoe je geld kan besparen was succesvol, de resultaten kan je zien bij '"'🔎 Energie audit'"'")
             st.balloons()
         except:
             st.warning("Deze data kon niet ingelezen worden, de juiste data kan je vinden op de website van [Fluvius](https://www.fluvius.be/nl/thema/meters-en-meterstanden/digitale-meter/hoe-mijn-energieverbruik-online-raadplegen)")
