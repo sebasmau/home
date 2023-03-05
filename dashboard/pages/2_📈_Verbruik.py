@@ -175,8 +175,8 @@ with tab1:
         sensitivity = [0.9,0.95,0.99,0.999,0.9999,1]
         afname_piek = {}
         for i in sensitivity:
-            afname_piek.append(dt[dt['Register'].str.contains('Afname')]['Volume'].quantile(i)*60/EAN_data['Time_unit (m)'])
-        EAN_data[i] = afname_piek
+            afname_piek[i]=(dt[dt['Register'].str.contains('Afname')]['Volume'].quantile(i)*60/EAN_data['Time_unit (m)'])
+        EAN_data['Afname piek percentielen (kW)'] = afname_piek
 
 
         #write to database
