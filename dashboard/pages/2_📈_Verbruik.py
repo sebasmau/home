@@ -24,7 +24,7 @@ hide_streamlit_style = """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
 
 ####LOGIN CODE####
-
+st.write(st.session_state['userID'])
 
 if 'firebase' not in st.session_state:
         config = {"apiKey":st.secrets["firebase_credentials"]["apiKey"],"authDomain":st.secrets["firebase_credentials"]["authDomain"],"storageBucket":st.secrets["firebase_credentials"]["storageBucket"],"databaseURL":st.secrets["firebase_credentials"]["databaseURL"]}
@@ -56,6 +56,7 @@ if st.session_state['logged_in'] == False and st.session_state['create_account']
             st.session_state['logged_in'] = True
             st.session_state['password_reset'] = False
             st.session_state['userID'] = signin['localId']
+            st.write(st.session_state['userID'])
         except:
             st.error("verkeerd wachtwoord")
             st.session_state['password_reset'] = True
@@ -79,6 +80,8 @@ if st.session_state['logged_in'] == False and st.session_state['create_account']
     
     ####rerun script to show real page after succesfull login
     if st.session_state['logged_in']:
+        st.write(st.session_state['userID'])
+        time.sleep(10)
         st.experimental_rerun()
     else:
         st.stop()
