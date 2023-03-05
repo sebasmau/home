@@ -30,7 +30,7 @@ if 'firebase' not in st.session_state:
         st.session_state['firebase'] = pyrebase.initialize_app(config)
 
 if 'UserID' not in st.session_state:
-        st.session_state['userID'] = None
+        st.session_state['userID'] = "Unknown"
 
 if 'logged_in' not in st.session_state:
         st.session_state['logged_in'] = False
