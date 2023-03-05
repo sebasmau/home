@@ -130,7 +130,7 @@ tab1, tab2 = st.tabs(["Fluvius - Digitale meter", "Invencado - Smart Meter"])
 with tab1:
 
     @st.cache_data(show_spinner="Analyseren hoe je geld kan besparen...")
-    def interpret_csv_dataset(uploaded_file,firebaselink):
+    def interpret_csv_dataset(uploaded_file):
         
         ###translate csv into dataframe and create dict to be save
         dt = pd.read_csv(uploaded_file,delimiter=';',decimal=',')
@@ -166,7 +166,7 @@ with tab1:
 
         #write to database
         st.write(EAN_data)
-        db = firebaselink.database()
+        db = st.session_state['firebase'].database()
         db.child("Fluvius_data").child(EAN_data['EAN_code']).set(EAN_data)
         
 
@@ -185,7 +185,7 @@ with tab1:
 
     ##initialize data upload
     if uploaded_file is not None:
-        interpret_csv_dataset(uploaded_file,st.session_state['firebase'])
+        interpret_csv_dataset(uploaded_file)
 
 
 
