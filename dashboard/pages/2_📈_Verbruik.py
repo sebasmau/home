@@ -191,7 +191,7 @@ with tab1:
     ##initialize data upload
     if uploaded_file is not None:
         try:
-            st.session_state['uploaded_dataframe'] = interpret_csv_dataset(uploaded_file,st.session_state['firebase'])
+            interpret_csv_dataset(uploaded_file,st.session_state['firebase'])
         except Exception as e:
             st.warning("Dit is geen gebruikersdata van Fluvius")
 
