@@ -56,8 +56,6 @@ if st.session_state['logged_in'] == False and st.session_state['create_account']
             st.session_state['logged_in'] = True
             st.session_state['password_reset'] = False
             st.session_state['userID'] = signin['localId']
-            st.write(signin['localId'])
-            st.write(signin)
         except:
             st.error("verkeerd wachtwoord")
             st.session_state['password_reset'] = True
@@ -81,10 +79,6 @@ if st.session_state['logged_in'] == False and st.session_state['create_account']
     
     ####rerun script to show real page after succesfull login
     if st.session_state['logged_in']:
-        st.write(st.session_state['logged_in'])
-        st.write(st.session_state['password_reset'])
-        st.write(st.session_state['userID'])
-        time.sleep(20)
         st.experimental_rerun()
     else:
         st.stop()
@@ -128,7 +122,7 @@ elif st.session_state['logged_in'] == False and st.session_state['create_account
 
 
 ###ACTUAL APP
-
+st.write(st.session_state['userID'])
 
 tab1, tab2 = st.tabs(["Fluvius - Digitale meter", "Invencado - Smart Meter"])
 
@@ -137,7 +131,7 @@ with tab1:
 
     @st.cache_data(show_spinner="Analyseren hoe je geld kan besparen...")
     def interpret_csv_dataset(uploaded_file):
-        
+        st.write(st.session_state['userID'])
         ###translate csv into dataframe and create dict to be save
         dt = pd.read_csv(uploaded_file,delimiter=';',decimal=',')
         EAN_data = {}
@@ -213,7 +207,9 @@ with tab1:
     ##initialize data upload
     if uploaded_file is not None:
         try:
+            st.write(st.session_state['userID'])
             interpret_csv_dataset(uploaded_file)
+            st.write(st.session_state['userID'])
             st.success("Analyse naar hoe je geld kan besparen was succesvol, de resultaten kan je zien bij '"'🔎 Energie audit'"'")
             st.balloons()
         except:
