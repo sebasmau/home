@@ -55,7 +55,7 @@ if st.session_state['logged_in'] == False and st.session_state['create_account']
             signin = st.session_state['firebase'].auth().sign_in_with_email_and_password(email,pw)
             st.session_state['logged_in'] = True
             st.session_state['password_reset'] = False
-            st.session_state['userID'] = signin['idToken']
+            st.session_state['userID'] = signin['localId']
         except:
             st.error("verkeerd wachtwoord")
             st.session_state['password_reset'] = True
@@ -110,7 +110,7 @@ elif st.session_state['logged_in'] == False and st.session_state['create_account
                 signin = st.session_state['firebase'].auth().create_user_with_email_and_password(email,pw)
                 st.session_state['logged_in'] = True
                 st.session_state['password_reset'] = False
-                st.session_state['userID'] = signin['idToken']
+                st.session_state['userID'] = signin['localId']
             except:
                 st.info("Aanmaken van een account niet gelukt, probeer later opnieuw")
                 st.stop()
