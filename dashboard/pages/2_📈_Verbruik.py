@@ -200,11 +200,11 @@ with tab1:
 
     ##initialize data upload
     if uploaded_file is not None:
-        try:
+        #try:
             interpret_csv_dataset(uploaded_file)
             st.success("Analyseren naar hoe je geld kan besparen was succesvol, de resultaten kan je zien bij '"'🔎 Energie audit'"'")
             st.balloons()
-        except:
+        #except:
             st.warning("Deze data kon niet ingelezen worden, de juiste data kan je vinden op de website van [Fluvius](https://www.fluvius.be/nl/thema/meters-en-meterstanden/digitale-meter/hoe-mijn-energieverbruik-online-raadplegen)")
 
 
