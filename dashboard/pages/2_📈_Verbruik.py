@@ -130,7 +130,7 @@ tab1, tab2 = st.tabs(["Fluvius - Digitale meter", "Invencado - Smart Meter"])
 with tab1:
 
     @st.cache_data(show_spinner="Analyseren hoe je geld kan besparen...")
-    def interpret_csv_dataset(uploaded_file,firebase):
+    def interpret_csv_dataset(uploaded_file,firebaselink):
         
         ###translate csv into dataframe and create dict to be save
         dt = pd.read_csv(uploaded_file,delimiter=';',decimal=',')
@@ -165,8 +165,8 @@ with tab1:
 
 
         #write to database
-
-        db = firebase.database()
+        st.write(EAN_data)
+        db = firebaselink.database()
         db.child("Fluvius_data").child(EAN_data['EAN_code']).set(EAN_data)
         
 
@@ -180,20 +180,12 @@ with tab1:
 
     ####actual app
 
-    st.title("Welcome bij MeterT 👋")
-    st.write("\n")
-
-
-
     uploaded_file = st.file_uploader("Plaats hier je Fluvius verbruik bestand",accept_multiple_files=False,type=["csv"])
 
 
     ##initialize data upload
     if uploaded_file is not None:
-        try:
-            interpret_csv_dataset(uploaded_file,st.session_state['firebase'])
-        except Exception as e:
-            st.warning("Dit is geen gebruikersdata van Fluvius")
+        interpret_csv_dataset(uploaded_file,st.session_state['firebase'])
 
 
 
