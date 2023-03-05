@@ -29,8 +29,7 @@ if 'firebase' not in st.session_state:
         config = {"apiKey":st.secrets["firebase_credentials"]["apiKey"],"authDomain":st.secrets["firebase_credentials"]["authDomain"],"storageBucket":st.secrets["firebase_credentials"]["storageBucket"],"databaseURL":st.secrets["firebase_credentials"]["databaseURL"]}
         st.session_state['firebase'] = pyrebase.initialize_app(config)
 
-if 'UserID' not in st.session_state:
-        st.write("wtf?")
+if 'userID' not in st.session_state:
         st.session_state['userID'] = "Unknown"
 
 if 'logged_in' not in st.session_state:
@@ -42,7 +41,6 @@ if 'password_reset' not in st.session_state:
 if 'create_account' not in st.session_state:
         st.session_state['create_account'] = False
 
-st.write(st.session_state['userID'])
 
 if st.session_state['logged_in'] == False and st.session_state['create_account'] == False:  ###sign in screen 
     with st.form("Inloggen"):
@@ -58,7 +56,6 @@ if st.session_state['logged_in'] == False and st.session_state['create_account']
             st.session_state['logged_in'] = True
             st.session_state['password_reset'] = False
             st.session_state['userID'] = signin['localId']
-            st.write(st.session_state['userID'])
         except:
             st.error("verkeerd wachtwoord")
             st.session_state['password_reset'] = True
@@ -82,8 +79,6 @@ if st.session_state['logged_in'] == False and st.session_state['create_account']
     
     ####rerun script to show real page after succesfull login
     if st.session_state['logged_in']:
-        st.write(st.session_state['userID'])
-        time.sleep(10)
         st.experimental_rerun()
     else:
         st.stop()
@@ -127,7 +122,7 @@ elif st.session_state['logged_in'] == False and st.session_state['create_account
 
 
 ###ACTUAL APP
-st.write(st.session_state['userID'])
+
 
 tab1, tab2 = st.tabs(["Fluvius - Digitale meter", "Invencado - Smart Meter"])
 
@@ -136,7 +131,6 @@ with tab1:
 
     @st.cache_data(show_spinner="Analyseren hoe je geld kan besparen...")
     def interpret_csv_dataset(uploaded_file):
-        st.write(st.session_state['userID'])
         ###translate csv into dataframe and create dict to be save
         dt = pd.read_csv(uploaded_file,delimiter=';',decimal=',')
         EAN_data = {}
@@ -212,9 +206,7 @@ with tab1:
     ##initialize data upload
     if uploaded_file is not None:
         try:
-            st.write(st.session_state['userID'])
             interpret_csv_dataset(uploaded_file)
-            st.write(st.session_state['userID'])
             st.success("Analyse naar hoe je geld kan besparen was succesvol, de resultaten kan je zien bij '"'🔎 Energie audit'"'")
             st.balloons()
         except:
