@@ -147,9 +147,10 @@ with tab1:
         EAN_data['Meter_code'] = dt["Meter"].iloc[0]
         EAN_data['Meter_type'] = dt["Metertype"].iloc[0]
         EAN_data['Power_unit'] = dt["Eenheid"].iloc[0]
-        EAN_data['Time_unit'] = (dt["end_time"].iloc[0] - dt["start_time"].iloc[0]).seconds/60 ##15 bij kwartier waarden, 60 bij uurwaarden
-        EAN_data['Date_period'] = (dt["start_time"].iloc[-1] - dt["start_time"].iloc[0]).round('d').days
-        EAN_data['upload_date'] = dt["end_time"].iloc[0]
+        EAN_data['Time_unit (m)'] = (dt["end_time"].iloc[0] - dt["start_time"].iloc[0]).seconds/60 ##15 bij kwartier waarden, 60 bij uurwaarden
+        EAN_data['Available_period (d)'] = (dt["start_time"].iloc[-1] - dt["start_time"].iloc[0]).round('d').days
+        EAN_data['start_time'] = dt["end_time"].iloc[0].strftime('%d-%m-%Y %H:%M:%S')
+        EAN_data['end_time'] = dt["end_time"].iloc[-1].strftime('%d-%m-%Y %H:%M:%S')
 
         #get rid of useless columns
         dt = dt.dropna()[['start_time','end_time','Volume','Register']]
@@ -157,15 +158,14 @@ with tab1:
         ######injection analysis
 
         #Estimated solar capacity
-        var1 = dt[dt['Register'].str.contains('Injectie')]['Volume'].nlargest(3) ###largest 3 injections found
-        Estimated_generation_capacity = var1.mean()*60/EAN_data['Date_period'] ###60/Time_unit converts kWh towards kW
+        #var1 = dt[dt['Register'].str.contains('Injectie')]['Volume'].nlargest(3) ###largest 3 injections found
+        #Estimated_generation_capacity = var1.mean()*60/EAN_data['Date_period'] ###60/Time_unit converts kWh towards kW
 
         #Has solar panels
-        Has_solar_panels = True if Estimated_generation_capacity >= 0.6 else False  ###2 solar panels = +-600W
+        #Has_solar_panels = True if Estimated_generation_capacity >= 0.6 else False  ###2 solar panels = +-600W
 
 
         #write to database
-        st.write(EAN_data)
         st.session_state['firebase'].database().child("fluvius_data").child(EAN_data['EAN_code']).set(EAN_data)
         
 
