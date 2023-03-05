@@ -124,17 +124,17 @@ elif st.session_state['logged_in'] == False and st.session_state['create_account
 ###ACTUAL APP
 
 
-tab1, tab2 = st.tabs(["Fluvius - Digitale meter", "Invencado Smart Meter"])
+tab1, tab2 = st.tabs(["Fluvius - Digitale meter", "Invencado - Smart Meter"])
 
 
 with tab1:
-    if 'uploaded_dataframe' not in st.session_state:
-        st.session_state['uploaded_dataframe'] = None
 
     @st.cache_data(show_spinner="Analyseren hoe je geld kan besparen...")
-    def interpret_csv_dataset(uploaded_file):
-        ###translate csv into dataframe
+    def interpret_csv_dataset(uploaded_file,firebase):
+        
+        ###translate csv into dataframe and create dict to be save
         dt = pd.read_csv(uploaded_file,delimiter=';',decimal=',')
+        EAN_data = {}
 
         ###get start period
         dt['start_time'] = pd.to_datetime(dt.iloc[:,0] + " " + dt.iloc[:,1],format='%d-%m-%Y %H:%M:%S')
@@ -142,13 +142,14 @@ with tab1:
         ###get end period
         dt['end_time'] = pd.to_datetime(dt.iloc[:,2] + " " + dt.iloc[:,3],format='%d-%m-%Y %H:%M:%S')
 
-        #get repeated parameters
-        EAN_code = dt["EAN"].iloc[0].replace('=','').replace('"','')
-        Meter_code = dt["Meter"].iloc[0]
-        Meter_type = dt["Metertype"].iloc[0]
-        Power_unit = dt["Eenheid"].iloc[0]
-        Time_unit = (dt["end_time"].iloc[0] - dt["start_time"].iloc[0]).seconds/60 ##15 bij kwartier waarden, 60 bij uurwaarden
-        Data_period = (dt["start_time"].iloc[-1] - dt["start_time"].iloc[0]).round('d').days
+        #get file parameters
+        EAN_data['EAN_code'] = dt["EAN"].iloc[0].replace('=','').replace('"','')
+        EAN_data['Meter_code'] = dt["Meter"].iloc[0]
+        EAN_data['Meter_type'] = dt["Metertype"].iloc[0]
+        EAN_data['Power_unit'] = dt["Eenheid"].iloc[0]
+        EAN_data['Time_unit'] = (dt["end_time"].iloc[0] - dt["start_time"].iloc[0]).seconds/60 ##15 bij kwartier waarden, 60 bij uurwaarden
+        EAN_data['Date_period'] = (dt["start_time"].iloc[-1] - dt["start_time"].iloc[0]).round('d').days
+        EAN_data['upload_date'] = dt["end_time"].iloc[0]
 
         #get rid of useless columns
         dt = dt.dropna()[['start_time','end_time','Volume','Register']]
@@ -157,14 +158,17 @@ with tab1:
 
         #Estimated solar capacity
         var1 = dt[dt['Register'].str.contains('Injectie')]['Volume'].nlargest(3) ###largest 3 injections found
-        Estimated_generation_capacity = var1.mean()*60/Time_unit ###60/Time_unit converts kWh towards kW
+        Estimated_generation_capacity = var1.mean()*60/EAN_data['Date_period'] ###60/Time_unit converts kWh towards kW
 
         #Has solar panels
         Has_solar_panels = True if Estimated_generation_capacity >= 0.6 else False  ###2 solar panels = +-600W
 
 
         #write to database
-        return dt
+
+        db = firebase.database()
+        db.child("Fluvius_data").child(EAN_data['EAN_code']).set(EAN_data)
+        
 
     @st.cache_data(show_spinner="Analyseren hoe je geld kan besparen...")
     def create_graph_data(dt):
@@ -187,12 +191,10 @@ with tab1:
     ##initialize data upload
     if uploaded_file is not None:
         try:
-            st.session_state['uploaded_dataframe'] = interpret_csv_dataset(uploaded_file)
+            st.session_state['uploaded_dataframe'] = interpret_csv_dataset(uploaded_file,st.session_state['firebase'])
         except Exception as e:
             st.warning("Dit is geen gebruikersdata van Fluvius")
 
-    if st.session_state['uploaded_dataframe'] is not None:
-        st.line_chart(create_graph_data(st.session_state['uploaded_dataframe']))
 
 
 
