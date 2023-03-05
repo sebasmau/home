@@ -4,11 +4,12 @@ channels:
 dependencies:
   - ipykernel=6.15.2
   - python=3.10
-  - streamlit=1.18.0
+  - streamlit=1.19.0
   - pandas=1.5.3
   - plotly=5.13.0
   - altair=4.2.2
   - pydeck=0.8.0
+  - protobuf=3.19.6
   - pip
   - pip:
      - pyrebase4 == 4.6.0
