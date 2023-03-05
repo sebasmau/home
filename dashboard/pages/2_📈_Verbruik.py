@@ -166,8 +166,7 @@ with tab1:
 
         #write to database
         st.write(EAN_data)
-        db = st.session_state['firebase'].database()
-        db.child("Fluvius_data").child(EAN_data['EAN_code']).set(EAN_data)
+        st.session_state['firebase'].database().child("fluvius_data").child(EAN_data['EAN_code']).set(EAN_data)
         
 
     @st.cache_data(show_spinner="Analyseren hoe je geld kan besparen...")
