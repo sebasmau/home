@@ -1,3 +1,4 @@
 start_streamlit.bat
 secrets.txt
 testdata_fluvius.csv
+notebook.ipynb
