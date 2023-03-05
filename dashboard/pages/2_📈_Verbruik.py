@@ -155,17 +155,15 @@ with tab1:
         #get rid of useless columns
         dt = dt.dropna()[['start_time','end_time','Volume','Register']]
 
-        ######injection analysis
-
-        #Estimated solar capacity
-        #var1 = dt[dt['Register'].str.contains('Injectie')]['Volume'].nlargest(3) ###largest 3 injections found
-        #Estimated_generation_capacity = var1.mean()*60/EAN_data['Date_period'] ###60/Time_unit converts kWh towards kW
-
-        #Has solar panels
-        #Has_solar_panels = True if Estimated_generation_capacity >= 0.6 else False  ###2 solar panels = +-600W
+        #get calulated parameters
+        largest_injections = dt[dt['Register'].str.contains('Injectie')]['Volume'].nlargest(5) ###largest 5 injections found
+        EAN_data['Estimated_generation_capacity (kW)'] = largest_injections.mean()*60/EAN_data['Time_unit (m)'] ###60/Time_unit converts kWh towards kW
+        EAN_data['Has_solar_panels'] = True if EAN_data['Estimated_generation_capacity (kW)'] >= 0.6 else False  ###2 solar panels = +-600W
 
 
         #write to database
+
+        st.session_state['firebase'].database().child("user").child(st.session_state['userID']).child(EAN_data['EAN_code']).set(True)
         st.session_state['firebase'].database().child("fluvius_data").child(EAN_data['EAN_code']).set(EAN_data)
         
 
@@ -184,7 +182,12 @@ with tab1:
 
     ##initialize data upload
     if uploaded_file is not None:
-        interpret_csv_dataset(uploaded_file)
+        try:
+            interpret_csv_dataset(uploaded_file)
+            st.success("Analyseren naar hoe je geld kan besparen wassuccesvol, de resultaten kan je zien bij '"'🔎 Energie audit'"'")
+            st.balloons()
+        except:
+            st.warning("Deze data kon niet ingelezen worden, de juiste data kan je vinden op de website van [Fluvius](https://www.fluvius.be/nl/thema/meters-en-meterstanden/digitale-meter/hoe-mijn-energieverbruik-online-raadplegen)")
 
 
 
