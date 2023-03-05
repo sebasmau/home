@@ -162,21 +162,28 @@ with tab1:
 
 
         #get injection and usage
-        EAN_data['Afname Dag (kW)'] = dt[dt['Register'].str.contains('Afname Dag')]['Volume'].sum()*60/EAN_data['Time_unit (m)'] ###60/Time_unit converts kWh towards kW
-        EAN_data['Afname Nacht (kW)'] = dt[dt['Register'].str.contains('Afname Nacht')]['Volume'].sum()*60/EAN_data['Time_unit (m)'] ###60/Time_unit converts kWh towards kW
-        EAN_data['Injectie Dag (kW)'] = dt[dt['Register'].str.contains('Injectie Dag')]['Volume'].sum()*60/EAN_data['Time_unit (m)'] ###60/Time_unit converts kWh towards kW
-        EAN_data['Injectie Nacht (kW)'] = dt[dt['Register'].str.contains('Injectie Nacht')]['Volume'].sum()*60/EAN_data['Time_unit (m)'] ###60/Time_unit converts kWh towards kW
-        EAN_data['Afname Nacht 0.05 quintiel (kW)'] = dt[dt['Register'].str.contains('Afname Nacht')]['Volume'].quantile(0.05)*60/EAN_data['Time_unit (m)'] ###60/Time_unit converts kWh towards kW
+        EAN_data['Afname Dag (kWh)'] = dt[dt['Register'].str.contains('Afname Dag')]['Volume'].sum()
+        EAN_data['Afname Nacht (kWh)'] = dt[dt['Register'].str.contains('Afname Nacht')]['Volume'].sum()
+        EAN_data['Injectie Dag (kWh)'] = dt[dt['Register'].str.contains('Injectie Dag')]['Volume'].sum()
+        EAN_data['Injectie Nacht (kWh)'] = dt[dt['Register'].str.contains('Injectie Nacht')]['Volume'].sum()
         vart = dt.set_index('start_time').between_time('10:00','16:00')
-        EAN_data['Afname Dag 10:00-16:00 (kW)'] = vart[vart['Register'].str.contains('Afname Dag')]['Volume'].sum()*60/EAN_data['Time_unit (m)'] ###60/Time_unit converts kWh towards kW
-        EAN_data['Injectie Dag 10:00-16:00 (kW)'] = vart[vart['Register'].str.contains('Injectie Dag')]['Volume'].sum()*60/EAN_data['Time_unit (m)'] ###60/Time_unit converts kWh towards kW
+        EAN_data['Afname Dag 10_16 (kWh)'] = vart[vart['Register'].str.contains('Afname Dag')]['Volume'].sum()
+        EAN_data['Injectie Dag 10_16 (kWh)'] = vart[vart['Register'].str.contains('Injectie Dag')]['Volume'].sum()
 
         #get peak percentile sensitivity
         sensitivity = [0.9,0.95,0.99,0.999,0.9999,1]
-        afname_piek = {}
+        afname_piek = []
         for i in sensitivity:
-            afname_piek[i]=(dt[dt['Register'].str.contains('Afname')]['Volume'].quantile(i)*60/EAN_data['Time_unit (m)'])
+            afname_piek.append(dt[dt['Register'].str.contains('Afname')]['Volume'].quantile(i)*60/EAN_data['Time_unit (m)'])
         EAN_data['Afname piek percentielen (kW)'] = afname_piek
+
+
+        sensitivity = [0,0.01,0.05,0.1,0.2,0.3]
+        afname_nacht_dal = []
+        for i in sensitivity:
+            afname_nacht_dal.append(dt[dt['Register'].str.contains('Afname')]['Volume'].quantile(i)*60/EAN_data['Time_unit (m)'])
+        EAN_data['Afname Nacht dal percentielen (kW)'] = afname_nacht_dal
+
 
 
         #write to database
