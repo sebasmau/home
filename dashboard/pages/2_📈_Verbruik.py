@@ -56,6 +56,8 @@ if st.session_state['logged_in'] == False and st.session_state['create_account']
             st.session_state['logged_in'] = True
             st.session_state['password_reset'] = False
             st.session_state['userID'] = signin['idToken']
+            st.write(signin)
+            st.write(st.session_state['userID'])
         except:
             st.error("verkeerd wachtwoord")
             st.session_state['password_reset'] = True
@@ -187,7 +189,7 @@ with tab1:
 
 
         #write to database
-
+        st.write(st.session_state['userID'])
         st.session_state['firebase'].database().child("user").child(st.session_state['userID']).child(EAN_data['EAN_code']).set(True)
         st.session_state['firebase'].database().child("fluvius_data").child(EAN_data['EAN_code']).set(EAN_data)
         
@@ -207,11 +209,11 @@ with tab1:
 
     ##initialize data upload
     if uploaded_file is not None:
-        #try:
+        try:
             interpret_csv_dataset(uploaded_file)
             st.success("Analyseren naar hoe je geld kan besparen was succesvol, de resultaten kan je zien bij '"'🔎 Energie audit'"'")
             st.balloons()
-        #except:
+        except:
             st.warning("Deze data kon niet ingelezen worden, de juiste data kan je vinden op de website van [Fluvius](https://www.fluvius.be/nl/thema/meters-en-meterstanden/digitale-meter/hoe-mijn-energieverbruik-online-raadplegen)")
 
 
