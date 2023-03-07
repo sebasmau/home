@@ -126,35 +126,8 @@ elif st.session_state['logged_in'] == False and st.session_state['create_account
 
 ####methods
 
-def switch_page(page_name: str):
-    from streamlit import _RerunData, _RerunException
-    from streamlit.source_util import get_pages
-
-    def standardize_name(name: str) -> str:
-        return name.lower().replace("_", " ")
-    
-    page_name = standardize_name(page_name)
-
-    pages = get_pages("1_🏠_Home.py")  # OR whatever your main page is called
-
-    for page_hash, config in pages.items():
-        if standardize_name(config["page_name"]) == page_name:
-            raise _RerunException(
-                _RerunData(
-                    page_script_hash=page_hash,
-                    page_name=page_name,
-                )
-            )
-
-    page_names = [standardize_name(config["page_name"]) for config in pages.values()]
-
-    raise ValueError(f"Could not find page {page_name}. Must be one of {page_names}")
-
-
-
-
 #####
-st.write("# Welkom op uw Metert Dashboard! 👋")
+st.write("# Welkom op uw MeterT Dashboard! 👋")
 metcol1,metcol2,metcol3 = st.columns(3)
 metcol1.metric("Energie verbruik",f"22 kWh","+2%")
 metcol2.metric("CO2 uitstoot",f"110 g","-25%")

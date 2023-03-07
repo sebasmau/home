@@ -126,15 +126,9 @@ elif st.session_state['logged_in'] == False and st.session_state['create_account
 ###ACTUAL APP
 
 
-def solarpanels():
+def solarpanels(fixed_investment,variable_investment,price_high,price_low,self_consumption,kWh_year_solarpanel,CO2_kWh):
     years = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25]
-    fixed_investment = 2130
-    variable_investment = 422
-    price_high = 0.5
-    price_low = 0.3
-    self_consumption = 0.3
-    kWh_year_solarpanel = 293
-    CO2_kWh = 300
+
     with st.expander(label='Zonnepanelen'):
         solarcol1,solarcol2 = st.columns([1.1,2])
 
@@ -164,10 +158,73 @@ def solarpanels():
         solarcol1.metric("Terugverdientijd",f"{round(solarinvestment / (solarpanels*kWh_year_solarpanel*(price_high*self_consumption+price_low*(1-self_consumption))),1)} jaar")
         solarcol1.metric("Winst na 25 jaar",f"{round(profit[24])} €")
         solarcol1.metric("CO2 besparing na 25 jaar",f"{round(solarpanels*kWh_year_solarpanel*CO2_kWh*25/1000)} kg")
-        if solarcol1.button('Meer info?'):
-            webbrowser.open_new_tab("https://www.hs-powersolutions.be/")
+        solarcol1.info("Meer info kan je [hier](https://www.hs-powersolutions.be/) vinden")
 
+
+
+def day_night_meter(day_price,night_price,day_night_price,day_usage,night_usage,available_period):
+    with st.expander(label='Dag/nacht tarief'):
+        prijs_enkel_dag = ((day_usage+night_usage)*day_night_price) * 365 / available_period
+        prijs_dag_nacht = ((day_usage*day_price+night_usage*night_price)) * 365 / available_period
+
+
+        dnmetercol1,dnmetercol2 = st.columns([1.1,2])
+
+
+        dnmetercol1.write("### Electriciteitsmeter")
+        type_tarief = dnmetercol1.selectbox('Ik heb momenteel een...',['Dag- en nachttarief','Dagtarief'])
+        
+
+        if type_tarief == 'Dag- en nachttarief' and prijs_enkel_dag<prijs_dag_nacht:
+            dnmetercol1.metric("Uit te sparen bedrag door over te schakelen naar een dag teller",(f"{round(prijs_dag_nacht-prijs_enkel_dag)} €/jaar"))
+            dnmetercol1.metric("Dit is een besparing van",(f"{round(prijs_enkel_dag/prijs_dag_nacht)} %/jaar"))
+            dnmetercol1.info("Klik [hier](https://mijnpostcode.fluvius.be/?lang=nl&applicatie=Aansluiting-aanvragen) om te schakelen naar een beter tarief")
+
+        elif type_tarief == 'Dag- en nachttarief' and prijs_enkel_dag>=prijs_dag_nacht:
+            dnmetercol1.metric("Goeie keuze, dit is goedkoper dan een dagtarief",(f"{round(prijs_enkel_dag-prijs_dag_nacht)} €/jaar"))
+
+        elif type_tarief == 'Dagtarief' and prijs_enkel_dag>prijs_dag_nacht:
+            dnmetercol1.metric("Uit te sparen bedrag door over te schakelen naar een dag nacht teller",(f"{round(prijs_enkel_dag-prijs_dag_nacht)} €/jaar"))
+            dnmetercol1.metric("Dit is een besparing van",(f"{round(prijs_dag_nacht/prijs_enkel_dag)} %/jaar"))
+            dnmetercol1.info("Klik [hier](https://mijnpostcode.fluvius.be/?lang=nl&applicatie=Aansluiting-aanvragen) om te schakelen naar een beter tarief")
+
+        elif type_tarief == 'Dagtarief' and prijs_enkel_dag<=prijs_dag_nacht:
+            dnmetercol1.metric("Goeie keuze, dit is goedkoper dan een dag- en nacht tarief",(f"{round(prijs_dag_nacht-prijs_enkel_dag)} €/jaar"))
+
+        dnmetercol2.write(("### Dag/nacht tarief"))
+        
+
+        if(prijs_enkel_dag>prijs_dag_nacht): 
+            day_night_graph_radius = 80 
+            day_graph_radius = 60 
+        else: 
+            day_night_graph_radius = 60 
+            day_graph_radius = 80 
+
+        if type_tarief == 'Dag- en nachttarief':
+            source = pd.DataFrame({"tarief": ["Dag tarief", "Nacht tarief"], "€": [round(day_usage*day_price* 365 / available_period), round(night_usage*night_price* 365 / available_period)]})
+            day_night_graph = alt.Chart(source).mark_arc(innerRadius=day_night_graph_radius).encode(
+                theta=alt.Theta(field="€", type="quantitative"),
+                color=alt.Color(field="tarief", type="nominal"),
+            ).configure_range(
+                    category=alt.RangeScheme(['#E5DE44', '#5148b2'])
+            )
+
+
+            dnmetercol2.altair_chart(day_night_graph,theme=None,use_container_width=True)
+        if type_tarief == 'Dagtarief':
+            source = pd.DataFrame({"tarief": ["Dag tarief", "Nacht tarief"], "€": [round((day_usage+night_usage)*day_night_price* 365 / available_period),0]})
+            colors = ['#7fc97f']
+            day_night_graph = alt.Chart(source).mark_arc(innerRadius=day_graph_radius).encode(
+                theta=alt.Theta(field="€", type="quantitative"),
+                color=alt.Color(field="tarief", type="nominal"),
+            ).configure_range(
+                    category=alt.RangeScheme(['#E5DE44', '#5148b2'])
+            )
+
+            dnmetercol2.altair_chart(day_night_graph,theme=None,use_container_width=True)
     
     
 st.write("#### Top besparingstips voor jou")
-solarpanels()
+solarpanels(2130,422,0.5,0.3,0.3,293,300)
+day_night_meter(0.5,0.3,0.4,4000,4500,20)

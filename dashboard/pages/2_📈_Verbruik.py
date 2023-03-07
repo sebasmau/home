@@ -186,8 +186,8 @@ with tab1:
 
 
         #write to database
-        st.session_state['firebase'].database().child("user").child(st.session_state['userID']).child(EAN_data['EAN_code']).set(True)
         st.session_state['firebase'].database().child("fluvius_data").child(EAN_data['EAN_code']).set(EAN_data)
+        st.session_state['firebase'].database().child("user").child(st.session_state['userID']).child('EAN').set({'541448860008410850':'541448860008410850'})
         
 
     @st.cache_data(show_spinner="Analyseren hoe je geld kan besparen...")
