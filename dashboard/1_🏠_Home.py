@@ -27,8 +27,7 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 
 if 'firebase' not in st.session_state:
-        config =st.secrets["firebase_credentials"]
-        config["serviceAccount"] = st.secrets["service_account"]
+        config =st.secrets['FirebaseCredentials']
         st.session_state['firebase'] = pyrebase.initialize_app(config)
         st.write(st.session_state['firebase'].database().get().val())
 
