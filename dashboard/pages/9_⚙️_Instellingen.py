@@ -26,8 +26,7 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 
 if 'firebase' not in st.session_state:
-        config = {"apiKey":st.secrets["firebase_credentials"]["apiKey"],"authDomain":st.secrets["firebase_credentials"]["authDomain"],"storageBucket":st.secrets["firebase_credentials"]["storageBucket"],"databaseURL":st.secrets["firebase_credentials"]["databaseURL"]}
-        st.session_state['firebase'] = pyrebase.initialize_app(config)
+        st.session_state['firebase'] = pyrebase.initialize_app(st.secrets['FirebaseCredentials'])
 
 if 'userID' not in st.session_state:
         st.session_state['userID'] = "Unknown"

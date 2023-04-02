@@ -26,8 +26,7 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 ####LOGIN CODE####
 
 if 'firebase' not in st.session_state:
-        config = {"apiKey":st.secrets["firebase_credentials"]["apiKey"],"authDomain":st.secrets["firebase_credentials"]["authDomain"],"storageBucket":st.secrets["firebase_credentials"]["storageBucket"],"databaseURL":st.secrets["firebase_credentials"]["databaseURL"]}
-        st.session_state['firebase'] = pyrebase.initialize_app(config)
+        st.session_state['firebase'] = pyrebase.initialize_app(st.secrets['FirebaseCredentials'])
 
 if 'userID' not in st.session_state:
         st.session_state['userID'] = "Unknown"
@@ -131,7 +130,7 @@ with tab1:
 
     @st.cache_data(show_spinner="Analyseren hoe je geld kan besparen...")
     def interpret_csv_dataset(uploaded_file):
-        ###translate csv into dataframe and create dict to be save
+        ###translate fluvius csv into dataframe and create dict to be save
         dt = pd.read_csv(uploaded_file,delimiter=';',decimal=',')
         EAN_data = {}
 
@@ -187,7 +186,7 @@ with tab1:
 
         #write to database
         st.session_state['firebase'].database().child("fluvius_data").child(EAN_data['EAN_code']).set(EAN_data)
-        st.session_state['firebase'].database().child("user").child(st.session_state['userID']).child('EAN').set({'541448860008410850':'541448860008410850'})
+        st.session_state['firebase'].database().child("user").child(st.session_state['userID']).child('EAN').set({EAN_data['EAN_code']:EAN_data['EAN_code']})
         
 
     @st.cache_data(show_spinner="Analyseren hoe je geld kan besparen...")
