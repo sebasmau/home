@@ -1,5 +1,7 @@
 start_streamlit.bat
 secrets.txt
+secrets.toml
 testdata_fluvius.csv
 notebook.ipynb
 analysis/
+.streamlit/
