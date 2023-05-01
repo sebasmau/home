@@ -23,7 +23,7 @@ hide_streamlit_style = """
             """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
 
-####LOGIN CODE####
+####LOGIN CODE###
 
 
 if 'firebase' not in st.session_state:
