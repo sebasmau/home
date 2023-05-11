@@ -8,3 +8,4 @@ pydeck == 0.8.0
 pyrebase4 == 4.6.0
 protobuf == 3.19.6
 requests == 2.29.0
+requests-toolbelt==0.10.1
