@@ -1,4 +1,5 @@
 import streamlit as st
+import urllib3
 import pyrebase
 import pandas as pd
 import time
