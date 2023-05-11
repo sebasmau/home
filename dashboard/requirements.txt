@@ -7,4 +7,4 @@ altair == 4.2.2
 pydeck == 0.8.0
 pyrebase4 == 4.6.0
 protobuf == 3.19.6
-urllib3 == 2.0.2
+requests == 2.29.0
