@@ -25,7 +25,23 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 st.write("hello little app")
 
 winelist = pd.read_csv("winedatabase.csv",delimiter=';',decimal=',')
-edited_winelist = st.data_editor(winelist)
+edited_winelist = st.data_editor(
+    winelist,
+    hide_index=True,
+    num_rows="dynamic",
+    column_config={
+        "naam": "Wijnnaam",
+        "jaar": st.column_config.NumberColumn(
+            "Botteljaar",
+            help="het jaar waarin de fles werd gebotteld",
+            min_value=1980,
+            max_value=2030,
+            step=1,
+            format="%d",
+        ),
+        "type": "Type wijn",
+    }
+)
 
 if st.button("save",type="primary", use_container_width=True):
     edited_winelist.to_csv(sep=';',decimal=",")
