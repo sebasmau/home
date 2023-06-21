@@ -85,7 +85,7 @@ edited_winelist = st.data_editor(
         "licht_stevig": "Sterkte",
         "droog_zoet": "Zoetheid",
         "rond_fris": "Frisheid"
-    }
+    },
     hide_index=True
 )
 
