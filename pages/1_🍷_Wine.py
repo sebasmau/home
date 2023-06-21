@@ -33,15 +33,41 @@ edited_winelist = st.data_editor(
         "naam": "Wijnnaam",
         "jaar": st.column_config.NumberColumn(
             "Botteljaar",
+            width="small",
             help="het jaar waarin de fles werd gebotteld",
             min_value=1980,
             max_value=2030,
             step=1,
-            format="%d",
+            format="%d"
         ),
         "type": "Type wijn",
+        "Stock": st.column_config.NumberColumn(
+            "Aantal",
+            width="small",
+            help="Aantal flessen momenteel op stock",
+            step=1,
+            format="%d"
+        ),
+        "Land": st.column_config.SelectboxColumn(
+            "Land",
+            help="Land van oorsprong van de wijn",
+            width="small",
+            options=[
+                "🇫🇷 Frankrijk",
+                "🇧🇪 België",
+                "🇩🇪 Duitsland",
+                "🇪🇸 Spanje",
+                "🇦🇹 Oostenrijk",
+            ],
+        )
+        "prijs": st.column_config.NumberColumn(
+            "Fles prijs",
+            width="small",
+            help="Aankoop prijs van deze wijn",
+            format="€ %d"
+        ),
     }
 )
 
 if st.button("save",type="primary", use_container_width=True):
-    edited_winelist.to_csv(sep=';',decimal=",")
+    edited_winelist.to_csv("winedatabase.csv",sep=';',decimal=",")
