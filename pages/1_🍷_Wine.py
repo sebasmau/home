@@ -25,27 +25,27 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 st.write("hello little app")
 
 winelist = pd.read_csv("winedatabase.csv",delimiter=';',decimal=',')
-column_order = [
-    "naam",
-    "jaar",
-    "type",
-    "land",
-    "regio",
-    "stock",
-    "prijs",
-    "score_sebastien",
-    "vivino_rating",
-    "soepel_tanninerijk",
-    "licht_stevig",
-    "droog_zoet",
-    "rond_fris",
-    "cadeau",
-    "schenker"
 
-]
 edited_winelist = st.data_editor(
     winelist,
     num_rows="dynamic",
+    column_order = [
+        "naam",
+        "jaar",
+        "type",
+        "land",
+        "regio",
+        "stock",
+        "prijs",
+        "score_sebastien",
+        "vivino_rating",
+        "soepel_tanninerijk",
+        "licht_stevig",
+        "droog_zoet",
+        "rond_fris",
+        "cadeau",
+        "schenker"
+    ],
     column_config={
         "naam": "Wijnnaam",
         "jaar": st.column_config.NumberColumn(
