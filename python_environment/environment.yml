@@ -4,7 +4,7 @@ channels:
 dependencies:
   - ipykernel=6.15.2
   - python=3.10
-  - streamlit=1.19.0
+  - streamlit=1.23.0
   - pandas=1.5.3
   - plotly=5.13.0
   - altair=4.2.2
