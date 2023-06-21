@@ -6,8 +6,8 @@ import time
 ####PAGE CONFIG
 
 st.set_page_config(
-    page_title="Kleine Houtakker",
-    page_icon="⚡",
+    page_title="Sébastien's app",
+    page_icon="🏠",
     layout='wide'
 )
 
@@ -17,7 +17,7 @@ with open('style.css') as f:
 
 hide_streamlit_style = """
             <style>
-            #MainMenu {visibility: hidden;}
+            MainMenu {visibility: hidden;}
             footer {visibility: hidden;}
             </style>
             """
