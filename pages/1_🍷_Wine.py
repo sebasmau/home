@@ -59,7 +59,7 @@ edited_winelist = st.data_editor(
                 "🇪🇸 Spanje",
                 "🇦🇹 Oostenrijk",
             ],
-        )
+        ),
         "prijs": st.column_config.NumberColumn(
             "Fles prijs",
             width="small",
