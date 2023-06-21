@@ -33,7 +33,6 @@ edited_winelist = st.data_editor(
         "naam": "Wijnnaam",
         "jaar": st.column_config.NumberColumn(
             "Botteljaar",
-            width="small",
             help="het jaar waarin de fles werd gebotteld",
             min_value=1980,
             max_value=2030,
@@ -43,15 +42,13 @@ edited_winelist = st.data_editor(
         "type": "Type wijn",
         "Stock": st.column_config.NumberColumn(
             "Aantal",
-            width="small",
             help="Aantal flessen momenteel op stock",
             step=1,
             format="%d"
         ),
-        "Land": st.column_config.SelectboxColumn(
+        "land": st.column_config.SelectboxColumn(
             "Land",
             help="Land van oorsprong van de wijn",
-            width="small",
             options=[
                 "🇫🇷 Frankrijk",
                 "🇧🇪 België",
@@ -62,10 +59,15 @@ edited_winelist = st.data_editor(
         ),
         "prijs": st.column_config.NumberColumn(
             "Fles prijs",
-            width="small",
             help="Aankoop prijs van deze wijn",
-            format="€ %d"
+            format="€ %.2f"
         ),
+        "score_sebastien": "Mijn rating",
+        "vivino_rating": "Vivino",
+        "soepel_tanninerijk": "Tannines",
+        "licht_stevig": "Sterkte",
+        "droog_zoet": "Zoetheid",
+        "rond_fris": "Frisheid"
     }
 )
 
