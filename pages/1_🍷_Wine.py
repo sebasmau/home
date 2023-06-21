@@ -24,3 +24,9 @@ hide_streamlit_style = """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
 
 st.write("hello little app")
+
+winelist = pd.read_csv("winedatabase.csv",delimiter=';',decimal=',')
+edited_winelist = st.data_editor(winelist)
+
+if st.button("save",type="primary", use_container_width=True):
+    edited_winelist.to_csv(sep=';',decimal=",")
