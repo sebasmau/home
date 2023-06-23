@@ -30,7 +30,7 @@ st.write("hello little app")
 
 
 # Use the secret key "firebase" to get the firebase account key
-cred = credentials.Certificate(st.secrets["firebase_credentials"])
+cred = credentials.Certificate(st.secrets["firestore_credentials"])
 firebase_admin.initialize_app(cred)
 
 # Create a reference to the firestore database
