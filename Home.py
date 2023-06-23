@@ -1,8 +1,7 @@
 import streamlit as st
 import pandas as pd
-import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import firestore
+from google.cloud import firestore
+from google.oauth2 import service_account
 import json
 import time
 
@@ -29,20 +28,33 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 st.write("hello little app")
 
 
-# Use the secret key "firebase" to get the firebase account key
-cred = credentials.Certificate(st.secrets["firestore_credentials"])
-firebase_admin.initialize_app(cred)
+# Authenticate to Firestore with the JSON account key.
+key_dict = json.loads(st.secrets["firestore_credentials"])
+creds = service_account.Credentials.from_service_account_info(key_dict)
+db = firestore.Client(credentials=creds, project="streamlit-reddit")
 
-# Create a reference to the firestore database
-db = firestore.client()
+# Create a reference to the Google post.
+doc_ref = db.collection("posts").document("Google")
 
-# Create a reference to the "posts" collection
-posts_ref = db.collection("winecollection")
+# Then get the data at that reference.
+doc = doc_ref.get()
 
-# Add a new document to the collection with some data
-new_post = posts_ref.document()
-new_post.set({
-    "title": "Hello Streamlit",
-    "content": "This is a test post",
-    "timestamp": firestore.SERVER_TIMESTAMP
+# Let's see what we got!
+st.write("The id is: ", doc.id)
+
+# This time, we're creating a NEW post reference for Apple
+doc_ref = db.collection("posts").document("Apple")
+
+# And then uploading some data to that reference
+doc_ref.set({
+	"title": "Apple",
+	"url": "www.apple.com"
 })
+
+# Now let's make a reference to ALL of the posts
+posts_ref = db.collection("posts")
+
+# For a reference to a collection, we use .stream() instead of .get()
+for doc in posts_ref.stream():
+	st.write("The id is: ", doc.id)
+	st.write("The contents are: ", doc.to_dict())
